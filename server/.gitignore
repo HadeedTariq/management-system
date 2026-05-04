@@ -1,6 +1,5 @@
 # Node.js dependencies
 /node_modules
-/src/scripts
 # Logs
 *.log
 npm-debug.log*

@@ -35,7 +35,6 @@ Thumbs.db
 
 # Next.js (Frontend) build output
 /client/.next/
-/server/src/scripts
 
 
 
