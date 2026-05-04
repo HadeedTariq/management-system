@@ -16,6 +16,8 @@ import {
   Info,
   LogOut,
   ChevronDown,
+  ShieldCheck,
+  GraduationCap,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -27,7 +29,7 @@ function ProfileDropDown() {
     },
     teacher: {
       label: "Society Head Dashboard",
-      path: "/teacher-dashboard",
+      path: "/society-head-dashboard",
     },
     student: {
       label: "Student Dashboard",
@@ -42,101 +44,142 @@ function ProfileDropDown() {
   const { user } = useFullApp();
   return (
     <DropdownMenu>
-      {/* Precision Trigger */}
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="group flex items-center gap-3 px-4 py-2 hover:bg-transparent focus:ring-0"
+          className="group flex items-center gap-2 px-2 py-1.5 h-auto hover:bg-slate-100 darks:hover:bg-slate-800 transition-all rounded-md border border-transparent focus-visible:ring-1 focus-visible:ring-indigo-500"
         >
-          <div className="flex items-center justify-center w-8 h-8 rounded-none border border-[#4A7C65]/30 group-hover:border-[#4A7C65] transition-colors duration-500">
-            <User2 size={16} strokeWidth={1.5} className="text-[#4A7C65]" />
+          {/* Sharp Avatar Placeholder */}
+          <div className="flex items-center justify-center w-8 h-8 rounded-md bg-indigo-50 darks:bg-indigo-950/30 border border-indigo-100 darks:border-indigo-800 transition-colors duration-200">
+            <User2
+              size={18}
+              strokeWidth={2}
+              className="text-indigo-600 darks:text-indigo-400"
+            />
           </div>
+
           <ChevronDown
-            size={12}
-            className="text-gray-400 group-hover:text-[#4A7C65] transition-all duration-500 group-data-[state=open]:rotate-180"
+            size={14}
+            strokeWidth={2.5}
+            className="text-slate-400 transition-transform duration-300 group-data-[state=open]:rotate-180"
           />
         </Button>
       </DropdownMenuTrigger>
 
-      {/* Sleek, Premium Content Area */}
       <DropdownMenuContent
         align="end"
-        sideOffset={12}
+        sideOffset={8}
         className="
           w-64 
-          rounded-none
-          border border-[#4A7C65]/10 
-          bg-white/95 backdrop-blur-md 
-          darks:bg-[#0C0E0D]/95 darks:border-[#4A7C65]/20
-          shadow-[0_20px_50px_rgba(0,0,0,0.1)]
-          p-2
+          rounded-lg
+          border border-slate-200 
+          bg-white 
+          darks:bg-slate-900 darks:border-slate-800
+          shadow-xl shadow-slate-200/50 darks:shadow-none
+          p-1.5
+          animate-in fade-in zoom-in-95 duration-100
         "
       >
-        <DropdownMenuLabel className="px-4 py-3">
-          <span className="text-[10px] tracking-[0.3em] uppercase font-semibold text-[#4A7C65]">
-            Account Identity
-          </span>
-          {user?.email && (
-            <p className="text-[11px] text-gray-500 darks:text-gray-400 font-light mt-1 truncate">
-              {user.email}
+        <div className="px-3 py-3 mb-1">
+          <p className="text-[10px] font-bold tracking-widest uppercase text-slate-400 darks:text-slate-500 mb-1">
+            Account
+          </p>
+          <div className="flex flex-col gap-0.5">
+            <p className="text-sm font-semibold text-slate-900 darks:text-slate-100 truncate">
+              {user?.user_name || "Member User"}
             </p>
-          )}
-        </DropdownMenuLabel>
+            {user?.email && (
+              <p className="text-xs text-slate-500 darks:text-slate-400 truncate">
+                {user.email}
+              </p>
+            )}
+          </div>
+        </div>
 
-        <DropdownMenuSeparator className="bg-[#4A7C65]/5 darks:bg-[#4A7C65]/10 mx-2" />
+        <DropdownMenuSeparator className="bg-slate-100 darks:bg-slate-800 mx-1" />
 
-        <DropdownMenuGroup className="py-2">
-          {/* Dynamic Role-Based Dashboard */}
+        <DropdownMenuGroup className="space-y-0.5 py-1.5">
+          {/* Admin Dashboard Entry */}
           {user && roleDashboardMap["admin"] && (
             <Link to={roleDashboardMap["admin"].path}>
               <DropdownMenuItem
                 className="
-                flex items-center gap-3 px-4 py-3 cursor-pointer
-                text-[12px] tracking-wide text-gray-700 darks:text-gray-300
-                focus:bg-[#4A7C65]/5 darks:focus:bg-[#4A7C65]/10 
-                focus:text-[#4A7C65] darks:focus:text-[#4A7C65]
-                transition-colors duration-300 rounded-none
-              "
+                  flex items-center gap-3 px-3 py-2.5 cursor-pointer
+                  text-sm font-medium text-slate-700 darks:text-slate-300
+                  focus:bg-indigo-50 darks:focus:bg-indigo-950/40 
+                  focus:text-indigo-600 darks:focus:text-indigo-400
+                  transition-colors rounded-md
+                "
               >
-                <LayoutDashboard size={15} strokeWidth={1.5} />
-                <span className="uppercase">
-                  {roleDashboardMap["admin"].label}
-                </span>
+                <ShieldCheck size={16} strokeWidth={2} />
+                <span>{roleDashboardMap["admin"].label}</span>
               </DropdownMenuItem>
             </Link>
           )}
 
-          {/* About Link */}
+          {/* Teacher/Head Dashboard Entry */}
+          {user && roleDashboardMap["teacher"] && (
+            <Link to={roleDashboardMap["teacher"].path}>
+              <DropdownMenuItem
+                className="
+                  flex items-center gap-3 px-3 py-2.5 cursor-pointer
+                  text-sm font-medium text-slate-700 darks:text-slate-300
+                  focus:bg-indigo-50 darks:focus:bg-indigo-950/40 
+                  focus:text-indigo-600 darks:focus:text-indigo-400
+                  transition-colors rounded-md
+                "
+              >
+                <GraduationCap size={16} strokeWidth={2} />
+                <span>{roleDashboardMap["teacher"].label}</span>
+              </DropdownMenuItem>
+            </Link>
+          )}
+
+          {/* General Dashboard / Portal */}
+          <Link to="/portal">
+            <DropdownMenuItem
+              className="
+                flex items-center gap-3 px-3 py-2.5 cursor-pointer
+                text-sm font-medium text-slate-700 darks:text-slate-300
+                focus:bg-indigo-50 darks:focus:bg-indigo-950/40 
+                focus:text-indigo-600 darks:focus:text-indigo-400
+                transition-colors rounded-md
+              "
+            >
+              <LayoutDashboard size={16} strokeWidth={2} />
+              <span>Personal Console</span>
+            </DropdownMenuItem>
+          </Link>
+
           <Link to="/about-us">
             <DropdownMenuItem
               className="
-              flex items-center gap-3 px-4 py-3 cursor-pointer
-              text-[12px] tracking-wide text-gray-700 darks:text-gray-300
-              focus:bg-[#4A7C65]/5 darks:focus:bg-[#4A7C65]/10 
-              focus:text-[#4A7C65] darks:focus:text-[#4A7C65]
-              transition-colors duration-300 rounded-none
-            "
+                flex items-center gap-3 px-3 py-2.5 cursor-pointer
+                text-sm font-medium text-slate-700 darks:text-slate-300
+                focus:bg-indigo-50 darks:focus:bg-indigo-950/40 
+                focus:text-indigo-600 darks:focus:text-indigo-400
+                transition-colors rounded-md
+              "
             >
-              <Info size={15} strokeWidth={1.5} />
-              <span className="uppercase">Platform Philosophy</span>
+              <Info size={16} strokeWidth={2} />
+              <span>Platform Specs</span>
             </DropdownMenuItem>
           </Link>
         </DropdownMenuGroup>
 
-        <DropdownMenuSeparator className="bg-[#4A7C65]/5 darks:bg-[#4A7C65]/10 mx-2" />
+        <DropdownMenuSeparator className="bg-slate-100 darks:bg-slate-800 mx-1" />
 
-        {/* Logout - Refined Red */}
         <DropdownMenuItem
           onClick={() => logout()}
           className="
-            flex items-center gap-3 px-4 py-3 mt-1 cursor-pointer
-            text-[12px] tracking-wide text-gray-400 hover:text-red-800 darks:hover:text-red-400
-            focus:bg-red-50/50 darks:focus:bg-red-950/10
-            transition-all duration-300 rounded-none
+            flex items-center gap-3 px-3 py-2.5 mt-1 cursor-pointer
+            text-sm font-semibold text-rose-600 darks:text-rose-400
+            focus:bg-rose-50 darks:focus:bg-rose-950/30
+            transition-all rounded-md
           "
         >
-          <LogOut size={15} strokeWidth={1.5} />
-          <span className="uppercase">Terminate Session</span>
+          <LogOut size={16} strokeWidth={2.5} />
+          <span>Sign Out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

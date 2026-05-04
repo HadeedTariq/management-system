@@ -93,7 +93,7 @@ export function OtpHandler({
             render={({ field }) => (
               <FormItem className="flex flex-col items-center space-y-8">
                 <div className="text-center space-y-3">
-                  <FormLabel className="text-[10px] tracking-[0.3em] uppercase font-semibold text-[#4A7C65] flex items-center justify-center gap-2">
+                  <FormLabel className="text-[10px] tracking-[0.3em] uppercase font-semibold text-indigo-600 flex items-center justify-center gap-2">
                     <KeyRound size={14} strokeWidth={1.5} />
                     Secure Verification
                   </FormLabel>
@@ -113,7 +113,7 @@ export function OtpHandler({
                         <InputOTPSlot
                           key={i}
                           index={i}
-                          className="w-10 h-14 sm:w-12 sm:h-16 cursor-text text-lg font-light border-0 border-b-2 border-gray-200 darks:border-gray-800 focus:border-[#4A7C65] darks:focus:border-[#4A7C65] transition-all duration-500 rounded-none bg-transparent text-[#4A7C65] darks:text-white"
+                          className="w-10 h-14 sm:w-12 sm:h-16 cursor-text text-lg font-light border-0 border-b-2 border-gray-200 darks:border-gray-800 focus:border-indigo-600 darks:focus:border-indigo-600 transition-all duration-500 rounded-none bg-transparent text-indigo-600 darks:text-white"
                         />
                       ))}
                     </InputOTPGroup>
@@ -128,7 +128,7 @@ export function OtpHandler({
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full h-14 rounded-none bg-[#4A7C65] hover:bg-[#3d6653] text-white tracking-[0.2em] uppercase text-[11px] font-medium transition-all duration-700 ease-in-out shadow-none border-none group"
+              className="w-full h-14 rounded-none bg-indigo-600 hover:bg-[#3d6653] text-white tracking-[0.2em] uppercase text-[11px] font-medium transition-all duration-700 ease-in-out shadow-none border-none group"
             >
               {isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

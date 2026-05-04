@@ -21,6 +21,11 @@ import UpdateSociety from "./pages/app/routes/admin/socities/UpdateSociety";
 import ManageUsers from "./pages/app/routes/admin/users/ManageUsers";
 import ManageSocietyMembers from "./pages/app/routes/admin/socities/ManageSocietyMembers";
 import AboutUs from "./pages/app/routes/AboutUs";
+import SocietyHeadDashboard from "./pages/app/components/society-head/SocietyHeadDashboard";
+import SocietyHeadDashboardFrontPage from "./pages/app/routes/society-head/SocietyHeadDashboardFrontPage";
+import SocietyHeadSocieties from "./pages/app/routes/society-head/SocietyHeadSocieties";
+import MySocietyPosts from "./pages/app/routes/society-head/MySocietyPosts";
+import CreateSocietyPost from "./pages/app/routes/society-head/CreateSocietyPost";
 
 function App() {
   const { user } = useFullApp();
@@ -70,6 +75,23 @@ function App() {
           <Route path="create" element={<CreateSociety />} />
           <Route path="update/:id" element={<UpdateSociety />} />
         </Route>
+      </Route>
+
+      <Route
+        path="/society-head-dashboard"
+        element={
+          // <AdminAuthLayout>
+          <SocietyHeadDashboard />
+          // </AdminAuthLayout>
+        }
+      >
+        <Route index element={<SocietyHeadDashboardFrontPage />} />
+        <Route path="my-societies" element={<SocietyHeadSocieties />} />
+        <Route path="my-society/posts/:id" element={<MySocietyPosts />} />
+        <Route
+          path="my-society/:id/create-post"
+          element={<CreateSocietyPost />}
+        />
       </Route>
     </Routes>
   );

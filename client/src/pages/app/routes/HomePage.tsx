@@ -19,8 +19,8 @@ export default function CiviConnectHomepage() {
       {/* HERO */}
       <section className="max-w-[1100px] mx-auto px-6 py-16 md:py-20 md:px-10 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
         <div>
-          <div className="inline-flex items-center gap-1.5 bg-[#EDEAE3] darks:bg-[#252320] border border-[#1A1814]/10 darks:border-[#F2EFE8]/10 rounded-full px-3.5 py-1 text-xs font-medium text-[#2D4A3E] darks:text-[#4A7C65] uppercase tracking-wider mb-5">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#2D4A3E] darks:bg-[#4A7C65] animate-pulse"></div>
+          <div className="inline-flex items-center gap-1.5 bg-[#EDEAE3] darks:bg-[#252320] border border-[#1A1814]/10 darks:border-[#F2EFE8]/10 rounded-full px-3.5 py-1 text-xs font-medium text-indigo-600 darks:text-indigo-600 uppercase tracking-wider mb-5">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 darks:bg-indigo-600 animate-pulse"></div>
             Civiline College · Est. 2024
           </div>
           <h1 className="font-['Playfair_Display',_serif] text-4xl md:text-5xl lg:text-[52px] font-black leading-[1.1] tracking-tight mb-5">
@@ -35,7 +35,7 @@ export default function CiviConnectHomepage() {
             and participating in Civiline College's vibrant society ecosystem.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button className="bg-[#2D4A3E] hover:bg-[#2D4A3E]/90 text-[#F5F3EE] darks:bg-[#4A7C65] darks:hover:bg-[#4A7C65]/90 h-[50px] px-7 text-[15px] rounded-xl">
+            <Button className="bg-indigo-600 hover:bg-indigo-600/90 text-[#F5F3EE] darks:bg-indigo-600 darks:hover:bg-indigo-600/90 h-[50px] px-7 text-[15px] rounded-xl">
               Join a Society
             </Button>
             <Button
@@ -55,7 +55,7 @@ export default function CiviConnectHomepage() {
               <span className="text-[13px] font-medium text-[#5C5748] darks:text-[#A8A298]">
                 Active Societies
               </span>
-              <span className="text-[11px] text-[#2D4A3E] darks:text-[#4A7C65] cursor-pointer">
+              <span className="text-[11px] text-indigo-600 darks:text-indigo-600 cursor-pointer">
                 View all →
               </span>
             </div>
@@ -122,7 +122,7 @@ export default function CiviConnectHomepage() {
           {/* Float Card 1 */}
           <div
             className="absolute -bottom-2 -right-2 md:bottom-8 md:-right-6 w-48 z-40 
-  bg-[#2D4A3E]/90 darks:bg-[#4A7C65]/90 backdrop-blur-md 
+  bg-indigo-600/90 darks:bg-indigo-600/90 backdrop-blur-md 
   text-[#F5F3EE] rounded-2xl p-5 
   shadow-[0_10px_30px_rgba(0,0,0,0.15)] 
   border border-white/10 
@@ -188,7 +188,7 @@ export default function CiviConnectHomepage() {
       {/* FEATURES GRID */}
       <section className="max-w-[1100px] mx-auto py-20 px-6 md:px-10">
         <div className="mb-12">
-          <div className="text-[11px] font-semibold tracking-widest uppercase text-[#2D4A3E] darks:text-[#4A7C65] mb-2.5">
+          <div className="text-[11px] font-semibold tracking-widest uppercase text-indigo-600 darks:text-indigo-600 mb-2.5">
             Key Features
           </div>
           <h2 className="font-['Playfair_Display',_serif] text-3xl md:text-[38px] font-bold leading-[1.15] tracking-tight mb-3">
@@ -205,7 +205,7 @@ export default function CiviConnectHomepage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Featured Card */}
-          <div className="bg-[#2D4A3E] darks:bg-[#4A7C65] text-[#F5F3EE] border border-transparent rounded-2xl p-7 transition-all hover:-translate-y-0.5">
+          <div className="bg-indigo-600 darks:bg-indigo-600 text-[#F5F3EE] border border-transparent rounded-2xl p-7 transition-all hover:-translate-y-0.5">
             <div className="w-11 h-11 rounded-xl bg-[#F5F3EE]/15 flex items-center justify-center mb-4.5">
               <Calendar className="w-5 h-5 text-white" />
             </div>
@@ -249,7 +249,7 @@ export default function CiviConnectHomepage() {
               key={i}
               className="bg-white darks:bg-[#1E1C19] border border-[#1A1814]/10 darks:border-[#F2EFE8]/10 rounded-2xl p-7 transition-all hover:-translate-y-0.5 hover:bg-[#F0EDE6] darks:hover:bg-[#2A2824]"
             >
-              <div className="w-11 h-11 rounded-xl bg-[#EDEAE3] darks:bg-[#252320] flex items-center justify-center mb-4.5 text-[#2D4A3E] darks:text-[#4A7C65]">
+              <div className="w-11 h-11 rounded-xl bg-[#EDEAE3] darks:bg-[#252320] flex items-center justify-center mb-4.5 text-indigo-600 darks:text-indigo-600">
                 {React.cloneElement(feat.icon as React.ReactElement, {
                   className: "w-5 h-5",
                 })}
@@ -270,7 +270,7 @@ export default function CiviConnectHomepage() {
       {/* SOCIETIES SHOWCASE */}
       <section className="max-w-[1100px] mx-auto py-20 px-6 md:px-10">
         <div className="mb-12">
-          <div className="text-[11px] font-semibold tracking-widest uppercase text-[#2D4A3E] darks:text-[#4A7C65] mb-2.5">
+          <div className="text-[11px] font-semibold tracking-widest uppercase text-indigo-600 darks:text-indigo-600 mb-2.5">
             Society Types
           </div>
           <h2 className="font-['Playfair_Display',_serif] text-3xl md:text-[38px] font-bold leading-[1.15] tracking-tight mb-3">
@@ -337,7 +337,7 @@ export default function CiviConnectHomepage() {
                 </div>
               </div>
               <div className="text-xs text-[#5C5748] darks:text-[#A8A298] flex items-center gap-1.5 pt-3.5 border-t border-[#1A1814]/10 darks:border-[#F2EFE8]/10">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#2D4A3E] darks:bg-[#4A7C65] shrink-0"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 darks:bg-indigo-600 shrink-0"></div>
                 {cat.stats}
               </div>
             </div>
@@ -350,7 +350,7 @@ export default function CiviConnectHomepage() {
       {/* HOW IT WORKS */}
       <section className="max-w-[1100px] mx-auto py-20 px-6 md:px-10">
         <div className="mb-12">
-          <div className="text-[11px] font-semibold tracking-widest uppercase text-[#2D4A3E] darks:text-[#4A7C65] mb-2.5">
+          <div className="text-[11px] font-semibold tracking-widest uppercase text-indigo-600 darks:text-indigo-600 mb-2.5">
             How It Works
           </div>
           <h2 className="font-['Playfair_Display',_serif] text-3xl md:text-[38px] font-bold leading-[1.15] tracking-tight">
@@ -392,7 +392,7 @@ export default function CiviConnectHomepage() {
               <div
                 className={`w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center font-['Playfair_Display',_serif] text-xl font-bold transition-colors ${
                   wf.active
-                    ? "bg-[#2D4A3E] darks:bg-[#4A7C65] text-[#F5F3EE] border-[#2D4A3E] darks:border-[#4A7C65]"
+                    ? "bg-indigo-600 darks:bg-indigo-600 text-[#F5F3EE] border-indigo-600 darks:border-indigo-600"
                     : "bg-white darks:bg-[#1E1C19] border border-[#1A1814]/10 darks:border-[#F2EFE8]/10 text-[#1A1814] darks:text-[#F2EFE8]"
                 }`}
               >
@@ -414,7 +414,7 @@ export default function CiviConnectHomepage() {
       {/* EVENTS SECTION */}
       <section className="max-w-[1100px] mx-auto py-20 px-6 md:px-10">
         <div className="mb-12">
-          <div className="text-[11px] font-semibold tracking-widest uppercase text-[#2D4A3E] darks:text-[#4A7C65] mb-2.5">
+          <div className="text-[11px] font-semibold tracking-widest uppercase text-indigo-600 darks:text-indigo-600 mb-2.5">
             Events
           </div>
           <h2 className="font-['Playfair_Display',_serif] text-3xl md:text-[38px] font-bold leading-[1.15] tracking-tight mb-3">
@@ -432,7 +432,7 @@ export default function CiviConnectHomepage() {
               <span className="bg-[#EDEAE3] darks:bg-[#252320] rounded-md px-2.5 py-1 text-xs font-medium text-[#5C5748] darks:text-[#A8A298]">
                 Apr 15, 2026
               </span>
-              <span className="bg-[#EDEAE3] darks:bg-[#252320] rounded-md px-2.5 py-1 text-xs font-medium text-[#2D4A3E] darks:text-[#4A7C65]">
+              <span className="bg-[#EDEAE3] darks:bg-[#252320] rounded-md px-2.5 py-1 text-xs font-medium text-indigo-600 darks:text-indigo-600">
                 Annual Gala
               </span>
             </div>
@@ -538,7 +538,7 @@ export default function CiviConnectHomepage() {
       </section>
 
       {/* CTA BANNER */}
-      <section className="bg-[#2D4A3E] darks:bg-[#4A7C65] transition-colors">
+      <section className="bg-indigo-600 darks:bg-indigo-600 transition-colors">
         <div className="max-w-[1100px] mx-auto py-16 px-6 md:py-20 md:px-10 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <div>
             <h2 className="font-['Playfair_Display',_serif] text-3xl md:text-[40px] font-bold leading-[1.15] tracking-tight text-[#F5F3EE] mb-3.5">
@@ -551,7 +551,7 @@ export default function CiviConnectHomepage() {
               deserves. It's free for all Civiline College students and staff.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button className="bg-[#F5F3EE] hover:bg-[#F5F3EE]/90 text-[#2D4A3E] darks:text-[#4A7C65] h-[50px] px-7 text-[15px] rounded-xl font-medium">
+              <Button className="bg-[#F5F3EE] hover:bg-[#F5F3EE]/90 text-indigo-600 darks:text-indigo-600 h-[50px] px-7 text-[15px] rounded-xl font-medium">
                 Create Your Society
               </Button>
               <Button

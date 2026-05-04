@@ -5,7 +5,7 @@ import { errorParser, uuidErrorHandler } from "@/utils/errorParser.util";
 import { logger } from "@/common/middleware/requestLogger";
 import { db } from "@/db/client";
 import { createSocietySchema } from "./admin.validator";
-import { societies, societyMembers, users } from "@/db";
+import { emailOtps, societies, societyMembers, users } from "@/db";
 import { and, desc, eq, sql } from "drizzle-orm";
 
 class AdminController {
@@ -788,6 +788,181 @@ class AdminController {
       logger.error({
         controller,
         event: "remove_society_head_failed",
+        requestId,
+        metadata: { error },
+      });
+
+      return next(error);
+    }
+  }
+
+  async deleteUser(req: Request, res: Response, next: NextFunction) {
+    const controller = "deleteUser";
+    const requestId = req.id;
+
+    const { userId } = req.params;
+
+    if (!userId || !uuidErrorHandler(userId)) {
+      logger.warn({
+        controller,
+        event: "invalid_input",
+        requestId,
+        metadata: { userId },
+      });
+
+      return res.status(400).json({
+        message: "Invalid or missing userId",
+      });
+    }
+
+    logger.info({
+      controller,
+      event: "delete_user_initiated",
+      requestId,
+      metadata: { userId },
+    });
+
+    try {
+      // Step 1: Check if user exists
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId));
+
+      if (!existingUser.length) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      const userEmail = existingUser[0].email;
+
+      // Step 2: Delete email OTPs (if email exists)
+      if (userEmail) {
+        await db.delete(emailOtps).where(eq(emailOtps.email, userEmail));
+      }
+
+      // Step 3: Delete user
+      const deletedUser = await db
+        .delete(users)
+        .where(eq(users.id, userId))
+        .returning({
+          id: users.id,
+        });
+
+      logger.info({
+        controller,
+        event: "user_deleted",
+        requestId,
+        metadata: { userId },
+      });
+
+      return res.status(200).json({
+        message: "User deleted successfully",
+        data: deletedUser,
+      });
+    } catch (error: any) {
+      const pgError = error?.cause;
+
+      if (pgError?.code === "22P02") {
+        return res.status(400).json({
+          message: "Invalid ID format",
+        });
+      }
+
+      logger.error({
+        controller,
+        event: "delete_user_failed",
+        requestId,
+        metadata: { error },
+      });
+
+      return next(error);
+    }
+  }
+  async banUser(req: Request, res: Response, next: NextFunction) {
+    const controller = "banUser";
+    const requestId = req.id;
+
+    const { userId } = req.body;
+
+    if (!userId || !uuidErrorHandler(userId)) {
+      logger.warn({
+        controller,
+        event: "invalid_input",
+        requestId,
+        metadata: { userId },
+      });
+
+      return res.status(400).json({
+        message: "Invalid or missing userId",
+      });
+    }
+
+    logger.info({
+      controller,
+      event: "ban_user_initiated",
+      requestId,
+      metadata: { userId },
+    });
+
+    try {
+      // Step 1: Check if user exists
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId));
+
+      if (!existingUser.length) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      // Step 2: Prevent redundant bans
+      if (existingUser[0].isActive === false) {
+        return res.status(400).json({
+          message: "User is already banned",
+        });
+      }
+
+      // Step 3: Ban user (deactivate)
+      const updatedUser = await db
+        .update(users)
+        .set({
+          isActive: false,
+          refreshToken: null,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, userId))
+        .returning({
+          id: users.id,
+          isActive: users.isActive,
+        });
+
+      logger.info({
+        controller,
+        event: "user_banned",
+        requestId,
+        metadata: { userId },
+      });
+
+      return res.status(200).json({
+        message: "User banned successfully",
+        data: updatedUser,
+      });
+    } catch (error: any) {
+      const pgError = error?.cause;
+
+      if (pgError?.code === "22P02") {
+        return res.status(400).json({
+          message: "Invalid ID format",
+        });
+      }
+
+      logger.error({
+        controller,
+        event: "ban_user_failed",
         requestId,
         metadata: { error },
       });

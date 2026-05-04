@@ -198,38 +198,151 @@ export const useGetPlatformUsers = (pageParam: number) => {
 
   return result;
 };
-
 export const useCreateSocietyHead = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ["create-society-head"],
-    mutationFn: async (payload: CreateSocietyInput) => {
+    mutationKey: ["make-society-head"],
+    mutationFn: async (payload: { societyId: string; userId: string }) => {
       const { data } = await adminApi.post(
         `/users/make-society-head/`,
         payload,
       );
-      return data;
+      return { ...data, societyId: payload.societyId };
     },
 
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast({
-        title: "Society created",
-        description: data?.message || "Society has been created successfully",
+        title: "Society Head Assigned",
+        description:
+          data?.message ||
+          "The user has been successfully assigned as the society head.",
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["get-admin-societies"],
+        queryKey: [`get-society-existing-members-${data.societyId}`],
       });
     },
 
     onError: (error: ErrResponse) => {
       const message =
         error.response?.data?.message ||
-        "Something went wrong while creating the society";
+        "Failed to assign society head. Please try again.";
 
       toast({
-        title: "Creation failed",
+        title: "Assignment Failed",
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const useRemoveSocietyHead = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["remove-society-head"],
+    mutationFn: async (payload: { societyId: string; userId: string }) => {
+      const { data } = await adminApi.post(
+        `/users/remove-society-head/`,
+        payload,
+      );
+      return { ...data, societyId: payload.societyId };
+    },
+
+    onSuccess: (data: any) => {
+      toast({
+        title: "Society Head Removed",
+        description:
+          data?.message ||
+          "The user has been removed from the society head role.",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`get-society-existing-members-${data.societyId}`],
+      });
+    },
+
+    onError: (error: ErrResponse) => {
+      const message =
+        error.response?.data?.message ||
+        "Failed to remove society head. Please try again.";
+
+      toast({
+        title: "Removal Failed",
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const useDeleteUser = (currentPage: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["delete-user"],
+    mutationFn: async (payload: { userId: string }) => {
+      const { data } = await adminApi.delete(`/users/delete/${payload.userId}`);
+      return { ...data, userId: payload.userId };
+    },
+
+    onSuccess: (data: any) => {
+      toast({
+        title: "User Deleted",
+        description: data?.message || "The user has been successfully deleted.",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`get-platform-users-${currentPage}`],
+      });
+    },
+
+    onError: (error: ErrResponse) => {
+      const message =
+        error.response?.data?.message ||
+        "Failed to delete user. Please try again.";
+
+      toast({
+        title: "Deletion Failed",
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const useBanUser = (currentPage: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["ban-user"],
+    mutationFn: async (payload: { userId: string }) => {
+      const { data } = await adminApi.post(`/users/ban/`, {
+        userId: payload.userId,
+      });
+      return { ...data, userId: payload.userId };
+    },
+
+    onSuccess: (data: any) => {
+      toast({
+        title: "User Banned",
+        description: data?.message || "The user has been successfully banned.",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`get-platform-users-${currentPage}`],
+      });
+    },
+
+    onError: (error: ErrResponse) => {
+      const message =
+        error.response?.data?.message ||
+        "Failed to ban user. Please try again.";
+
+      toast({
+        title: "Ban Failed",
         description: message,
         variant: "destructive",
       });

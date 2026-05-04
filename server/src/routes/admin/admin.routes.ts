@@ -29,5 +29,14 @@ router.post(
   "/users/remove-society-head/",
   asyncHandler(adminController.removeSocietyHead),
 );
+router.post(
+  "/users/remove-society-head/",
+  asyncHandler(adminController.removeSocietyHead),
+);
+router.delete(
+  "/users/delete/:userId",
+  asyncHandler(adminController.deleteUser),
+);
+router.post("/users/ban/", asyncHandler(adminController.banUser));
 
 export { router as adminRouter };

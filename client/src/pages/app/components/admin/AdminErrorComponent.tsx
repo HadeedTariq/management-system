@@ -32,14 +32,17 @@ export default function AdminErrorComponent({
         className,
       )}
     >
-      <div className="relative w-full max-w-lg overflow-hidden border border-[#4A7C65]/10 bg-white/50 darks:bg-[#0A0C0B]/50 backdrop-blur-sm p-12 lg:p-16 text-center">
+      <div className="relative w-full max-w-lg overflow-hidden border border-indigo-600/10 bg-white/50 darks:bg-[#0A0C0B]/50 backdrop-blur-sm p-12 lg:p-16 text-center">
         {/* Subtle Architectural Background Detail */}
-        <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-[#4A7C65]/20 to-transparent" />
+        <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-indigo-600/20 to-transparent" />
 
         {/* Icon: Using ShieldAlert for a more professional, "Secure" feel */}
         <div className="mb-8 flex justify-center">
-          <div className="flex h-16 w-16 items-center justify-center border border-[#4A7C65]/20 bg-[#4A7C65]/5 transition-transform duration-700 hover:scale-105">
-            <ShieldAlert className="h-6 w-6 text-[#4A7C65]" strokeWidth={1.2} />
+          <div className="flex h-16 w-16 items-center justify-center border border-indigo-600/20 bg-indigo-600/5 transition-transform duration-700 hover:scale-105">
+            <ShieldAlert
+              className="h-6 w-6 text-indigo-600"
+              strokeWidth={1.2}
+            />
           </div>
         </div>
 
@@ -59,7 +62,7 @@ export default function AdminErrorComponent({
             <Button
               variant="ghost"
               onClick={onRetry}
-              className="group h-12 rounded-none px-8 text-[10px] tracking-[0.25em] uppercase text-[#4A7C65] hover:bg-[#4A7C65] hover:text-white transition-all duration-500 ease-out"
+              className="group h-12 rounded-none px-8 text-[10px] tracking-[0.25em] uppercase text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all duration-500 ease-out"
             >
               <RefreshCcw
                 className="mr-3 h-3 w-3 transition-transform duration-700 group-hover:rotate-180"

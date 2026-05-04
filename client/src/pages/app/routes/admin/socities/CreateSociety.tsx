@@ -58,11 +58,11 @@ export default function CreateSociety() {
     <div className="min-h-screen bg-[#FDFDFD] darks:bg-[#0A0C0B] transition-colors duration-500">
       <div className="mx-auto max-w-3xl px-6 lg:px-8">
         {/* Header: High-End Editorial Style */}
-        <header className="mb-16 border-l-2 border-[#4A7C65] pl-8">
+        <header className="mb-16 border-l-2 border-indigo-600 pl-8">
           <h1 className="text-3xl font-light tracking-[0.15em] text-gray-900 darks:text-white uppercase italic">
             New Society
           </h1>
-          <p className="mt-2 text-sm tracking-widest text-[#4A7C65] font-medium uppercase opacity-80">
+          <p className="mt-2 text-sm tracking-widest text-indigo-600 font-medium uppercase opacity-80">
             Establish a new collective mandate
           </p>
         </header>
@@ -71,8 +71,12 @@ export default function CreateSociety() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-20">
             {/* Section 1: Basic Information */}
             <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="flex items-center gap-4 border-b border-gray-100 darks:border-[#4A7C65]/10 pb-4">
-                <Users size={18} strokeWidth={1.5} className="text-[#4A7C65]" />
+              <div className="flex items-center gap-4 border-b border-gray-100 darks:border-indigo-600/10 pb-4">
+                <Users
+                  size={18}
+                  strokeWidth={1.5}
+                  className="text-indigo-600"
+                />
                 <h2 className="text-[11px] tracking-[0.3em] uppercase font-bold text-gray-400">
                   Identity Details
                 </h2>
@@ -90,7 +94,7 @@ export default function CreateSociety() {
                       <FormControl>
                         <Input
                           placeholder="e.g., The Architectural Guild"
-                          className="rounded-none border-0 border-b border-gray-200 darks:border-gray-800 bg-transparent px-0 focus-visible:ring-0 focus-visible:border-[#4A7C65] transition-all text-lg font-light italic"
+                          className="rounded-none border-0 border-b border-gray-200 darks:border-gray-800 bg-transparent px-0 focus-visible:ring-0 focus-visible:border-indigo-600 transition-all text-lg font-light italic"
                           {...field}
                         />
                       </FormControl>
@@ -110,7 +114,7 @@ export default function CreateSociety() {
                       <FormControl>
                         <Textarea
                           placeholder="Describe the core purpose..."
-                          className="min-h-[100px] rounded-none border-gray-200 darks:border-gray-800 bg-transparent focus-visible:ring-1 focus-visible:ring-[#4A7C65] focus-visible:border-[#4A7C65] transition-all text-sm leading-relaxed font-light"
+                          className="min-h-[100px] rounded-none border-gray-200 darks:border-gray-800 bg-transparent focus-visible:ring-1 focus-visible:ring-indigo-600 focus-visible:border-indigo-600 transition-all text-sm leading-relaxed font-light"
                           {...field}
                         />
                       </FormControl>
@@ -123,11 +127,11 @@ export default function CreateSociety() {
 
             {/* Section 2: Configuration */}
             <section className="space-y-10 animate-in fade-in slide-in-from-bottom-4 delay-150 duration-700">
-              <div className="flex items-center gap-4 border-b border-gray-100 darks:border-[#4A7C65]/10 pb-4">
+              <div className="flex items-center gap-4 border-b border-gray-100 darks:border-indigo-600/10 pb-4">
                 <Settings2
                   size={18}
                   strokeWidth={1.5}
-                  className="text-[#4A7C65]"
+                  className="text-indigo-600"
                 />
                 <h2 className="text-[11px] tracking-[0.3em] uppercase font-bold text-gray-400">
                   Initial Configuration
@@ -147,16 +151,16 @@ export default function CreateSociety() {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="rounded-none border-gray-200 darks:border-gray-800 bg-transparent uppercase text-[10px] tracking-widest focus:ring-[#4A7C65]">
+                        <SelectTrigger className="rounded-none border-gray-200 darks:border-gray-800 bg-transparent uppercase text-[10px] tracking-widest focus:ring-indigo-600">
                           <SelectValue placeholder="Select Status" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="rounded-none border-[#4A7C65]/20 uppercase text-[10px] tracking-widest">
+                      <SelectContent className="rounded-none border-indigo-600/20 uppercase text-[10px] tracking-widest">
                         {Object.entries(statusConfig).map(([value, cfg]) => (
                           <SelectItem
                             key={value}
                             value={value}
-                            className="focus:bg-[#4A7C65]/5"
+                            className="focus:bg-indigo-600/5"
                           >
                             <span className="flex items-center gap-3">
                               <span
@@ -175,7 +179,7 @@ export default function CreateSociety() {
             </section>
 
             {/* Action Bar: Precision Positioning */}
-            <div className="pt-12 border-t border-gray-100 darks:border-[#4A7C65]/10 flex flex-col sm:flex-row items-center justify-between gap-8">
+            <div className="pt-12 border-t border-gray-100 darks:border-indigo-600/10 flex flex-col sm:flex-row items-center justify-between gap-8">
               <button
                 type="button"
                 onClick={() => {
@@ -193,7 +197,7 @@ export default function CreateSociety() {
               <Button
                 type="submit"
                 disabled={isPending}
-                className="w-full sm:w-auto min-w-[240px] h-14 rounded-none bg-[#4A7C65] hover:bg-[#3d6653] text-white tracking-[0.25em] uppercase text-[11px] font-medium transition-all duration-500 ease-in-out shadow-none group"
+                className="w-full sm:w-auto min-w-[240px] h-14 rounded-none bg-indigo-600 hover:bg-[#3d6653] text-white tracking-[0.25em] uppercase text-[11px] font-medium transition-all duration-500 ease-in-out shadow-none group"
               >
                 {isPending ? (
                   <Loader2 size={16} className="animate-spin" />

@@ -5,8 +5,15 @@ const authApi = axios.create({
   baseURL: `${url}/auth`,
   withCredentials: true,
 });
+
 const adminApi = axios.create({
   baseURL: `${url}/admin`,
   withCredentials: true,
 });
-export { authApi, adminApi };
+
+const societyHeadApi = axios.create({
+  baseURL: `${url}/society-head`,
+  withCredentials: true,
+});
+
+export { authApi, adminApi, societyHeadApi };

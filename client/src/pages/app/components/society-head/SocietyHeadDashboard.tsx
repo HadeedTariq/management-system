@@ -29,31 +29,19 @@ const sidebarItems = [
   {
     title: "Dashboard",
     icon: <LayoutDashboard className="h-5 w-5" />,
-    pathName: "/admin-dashboard",
+    pathName: "/society-head-dashboard",
   },
 
   {
-    title: "Society Management",
+    title: "My Societies",
     icon: <Building2 className="h-5 w-5" />,
-    pathName: undefined,
-    items: [
-      {
-        title: "All Societies",
-        url: "/admin-dashboard/societies",
-        icon: <Building2 className="h-4 w-4" />,
-      },
-      {
-        title: "Create Society",
-        url: "/admin-dashboard/societies/create",
-        icon: <ShieldCheck className="h-4 w-4" />,
-      },
-    ],
+    pathName: "/society-head-dashboard/my-societies",
   },
 
   {
     title: "Memberships",
     icon: <UserCog className="h-5 w-5" />,
-    pathName: "/admin-dashboard/memberships",
+    pathName: "/society-head-dashboard/memberships",
   },
 
   {
@@ -63,12 +51,12 @@ const sidebarItems = [
     items: [
       {
         title: "All Events",
-        url: "/admin-dashboard/events",
+        url: "/society-head-dashboard/events",
         icon: <CalendarDays className="h-4 w-4" />,
       },
       {
         title: "Pending Approvals",
-        url: "/admin-dashboard/events/pending",
+        url: "/society-head-dashboard/events/pending",
         icon: <ShieldCheck className="h-4 w-4" />,
       },
     ],
@@ -77,17 +65,17 @@ const sidebarItems = [
   {
     title: "Announcements",
     icon: <Megaphone className="h-5 w-5" />,
-    pathName: "/admin-dashboard/announcements",
+    pathName: "/society-head-dashboard/announcements",
   },
 
   {
     title: "Settings",
     icon: <Settings className="h-5 w-5" />,
-    pathName: "/admin-dashboard/settings",
+    pathName: "/society-head-dashboard/settings",
   },
 ];
 
-function AdminSidebar() {
+function SocietyHeadDashBoard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
@@ -219,10 +207,10 @@ function AdminSidebar() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-slate-900 darks:text-slate-100 truncate">
-                {user.user_name || "Admin User"}
+                {user.user_name || "Society Head"}
               </p>
               <p className="text-xs text-slate-500 darks:text-slate-400 truncate">
-                System Administrator
+                Society Head Dashboard
               </p>
             </div>
           </div>
@@ -290,4 +278,4 @@ function AdminSidebar() {
   );
 }
 
-export default AdminSidebar;
+export default SocietyHeadDashBoard;

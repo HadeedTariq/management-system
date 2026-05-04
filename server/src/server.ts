@@ -27,6 +27,8 @@ import { sql } from "drizzle-orm";
 import { adminRouter } from "./routes/admin/admin.routes";
 import { seedUsers } from "./scripts/dummy-user-creation";
 import { seedSocietyMembers } from "./scripts/dummy-societies";
+import { societyHeadRouter } from "./routes/society-head/societyHead.routes";
+import { seedSocietyPosts } from "./scripts/dummy-society-posts";
 
 const app: Express = express();
 
@@ -107,15 +109,15 @@ const verifyCallback: VerifyFunction = (
   }
 };
 
-db.execute(
-  sql`
-   select * from users
-  `,
-).then((user) => {
-  console.log("====================================");
-  console.log(user.rows);
-  console.log("====================================");
-});
+// db.execute(
+//   sql`
+//    select id from users where email = 'computeranalog351@gmail.com'
+//   `,
+// ).then((user) => {
+//   console.log("====================================");
+//   console.log(user.rows);
+//   console.log("====================================");
+// });
 
 passport.use(
   new FacebookStrategy(
@@ -140,9 +142,10 @@ passport.deserializeUser(
 );
 
 // seedSocietyMembers({
-//   societyId: "20f7c068-4df5-42cd-8953-829721814c67",
+//   societyId: "08936f16-2347-4d6c-b6d7-3bc1d96c3c7f",
 //   userIds: [
 //     "bdeaf858-2a78-4b22-9b27-a9d4ff284335",
+//     "75061f25-922e-472e-9fec-3c4955ae37d7",
 //     "1a01c852-011b-49d4-9862-81978fca049a",
 //     "0376a9d5-d087-4b75-a741-473c925340c0",
 //     "6782bcea-b27b-49e9-85fa-e78d82bcef74",
@@ -177,10 +180,20 @@ passport.deserializeUser(
 //   ],
 // });
 
+// seedSocietyPosts({
+//   societyId: "08936f16-2347-4d6c-b6d7-3bc1d96c3c7f",
+//   authorId: "75061f25-922e-472e-9fec-3c4955ae37d7",
+// }).then(() => {
+//   console.log("====================================");
+//   console.log("posts seeded");
+//   console.log("====================================");
+// });
+
 app.use(requestLogger);
 
 app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
+app.use("/society-head", societyHeadRouter);
 
 // Swagger UI
 app.use(openAPIRouter);

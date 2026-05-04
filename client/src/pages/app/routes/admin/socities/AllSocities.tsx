@@ -11,6 +11,11 @@ import {
   ArrowUpDown,
   Filter,
   User,
+  Building2,
+  Database,
+  Calendar,
+  Layers,
+  AlertTriangle,
 } from "lucide-react";
 
 import {
@@ -110,7 +115,7 @@ function SortableHead({
         {label}
         <ArrowUpDown
           className={`h-3.5 w-3.5 transition-colors ${
-            active ? "text-[#4A7C65]" : "text-slate-400"
+            active ? "text-indigo-600" : "text-slate-400"
           }`}
         />
       </button>
@@ -235,223 +240,267 @@ const AllSocieties = () => {
 
   // ── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#FDFDFD] darks:bg-[#0A0C0B] transition-colors duration-500">
-      <div className="mx-auto max-w-7xl px-8 sm:px-10 lg:px-12">
-        {/* Page Header: Editorial Minimalism */}
-        <div className="mb-16 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between border-b border-[#4A7C65]/10 pb-12">
-          <div className="space-y-3">
-            <h1 className="text-[10px] font-bold tracking-[0.4em] text-[#4A7C65] uppercase">
+    <div className="min-h-screen bg-slate-50 darks:bg-slate-950 transition-colors duration-300">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-indigo-600 darks:text-indigo-400 font-bold text-xs uppercase tracking-widest">
+              <Building2 size={14} />
               Institutional Management
-            </h1>
-            <h2 className="text-5xl font-extralight tracking-tight text-slate-900 darks:text-white italic">
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 darks:text-white">
               Societies
-            </h2>
-            <p className="text-sm tracking-wide text-slate-400 darks:text-slate-500 font-light max-w-md">
-              A centralized directory of registered mandates and their
-              operational status.
+            </h1>
+            <p className="text-sm text-slate-500 darks:text-slate-400 max-w-2xl">
+              Manage and monitor the centralized directory of registered
+              mandates, operational status, and institutional compliance.
             </p>
           </div>
 
-          {/* Summary Chips: Elevated with hairlines, no heavy backgrounds */}
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-3 border border-slate-200 darks:border-slate-800 px-5 py-2 transition-all hover:border-[#4A7C65]/30">
-              <Users strokeWidth={1.2} className="h-4 w-4 text-slate-400" />
-              <span className="text-[11px] tracking-[0.2em] font-semibold text-slate-900 darks:text-slate-100 uppercase">
-                {(societies ?? []).length}{" "}
-                <span className="font-light opacity-50 ml-1">Total</span>
-              </span>
+          {/* Stats Grid */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-3 bg-white darks:bg-slate-900 border border-slate-200 darks:border-slate-800 px-4 py-2.5 rounded-lg shadow-sm">
+              <div className="p-2 bg-slate-100 darks:bg-slate-800 rounded-md">
+                <Users
+                  size={16}
+                  className="text-slate-600 darks:text-slate-400"
+                />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase text-slate-400 leading-none mb-1">
+                  Total
+                </p>
+                <p className="text-sm font-bold text-slate-900 darks:text-white">
+                  {(societies ?? []).length}
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3 border border-[#4A7C65]/30 bg-[#4A7C65]/5 px-5 py-2">
-              <ShieldCheck
-                strokeWidth={1.2}
-                className="h-4 w-4 text-[#4A7C65]"
-              />
-              <span className="text-[11px] tracking-[0.2em] font-semibold text-[#4A7C65] uppercase">
-                {activeCount}{" "}
-                <span className="font-light opacity-60 ml-1">Active</span>
-              </span>
+            <div className="flex items-center gap-3 bg-white darks:bg-slate-900 border border-slate-200 darks:border-slate-800 px-4 py-2.5 rounded-lg shadow-sm">
+              <div className="p-2 bg-indigo-50 darks:bg-indigo-900/20 rounded-md">
+                <ShieldCheck
+                  size={16}
+                  className="text-indigo-600 darks:text-indigo-400"
+                />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase text-slate-400 leading-none mb-1">
+                  Active
+                </p>
+                <p className="text-sm font-bold text-slate-900 darks:text-white">
+                  {activeCount}
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center gap-3 border border-slate-200 darks:border-slate-800 px-5 py-2">
-              <ShieldOff strokeWidth={1.2} className="h-4 w-4 text-slate-400" />
-              <span className="text-[11px] tracking-[0.2em] font-semibold text-slate-600 darks:text-slate-400 uppercase">
-                {inactiveCount}{" "}
-                <span className="font-light opacity-50 ml-1">Inactive</span>
-              </span>
+            <div className="flex items-center gap-3 bg-white darks:bg-slate-900 border border-slate-200 darks:border-slate-800 px-4 py-2.5 rounded-lg shadow-sm">
+              <div className="p-2 bg-slate-100 darks:bg-slate-800 rounded-md">
+                <ShieldOff
+                  size={16}
+                  className="text-slate-600 darks:text-slate-400"
+                />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase text-slate-400 leading-none mb-1">
+                  Inactive
+                </p>
+                <p className="text-sm font-bold text-slate-900 darks:text-white">
+                  {inactiveCount}
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Toolbar: Precision positioned inputs */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Toolbar */}
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-white darks:bg-slate-900 p-4 rounded-xl border border-slate-200 darks:border-slate-800 shadow-sm">
           <div className="relative max-w-md flex-1 group">
-            <Search
-              className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300 transition-colors group-focus-within:text-[#4A7C65]"
-              strokeWidth={1.5}
-            />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
             <Input
-              placeholder="SEARCH REGISTRY..."
-              className="h-12 border-0 border-b border-slate-200 darks:border-slate-800 bg-transparent pl-8 rounded-none focus-visible:ring-0 focus-visible:border-[#4A7C65] text-[10px] tracking-[0.2em] uppercase transition-all"
+              placeholder="Search entities by name or description..."
+              className="h-10 border-slate-200 darks:border-slate-800 bg-slate-50 darks:bg-slate-950 pl-10 rounded-md focus-visible:ring-2 focus-visible:ring-indigo-500 transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-[10px] tracking-widest text-slate-400 uppercase mr-2">
-              <Filter size={12} strokeWidth={1.5} />
-              <span>Status Filter</span>
+          <div className="flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mr-1">
+              <Filter size={14} />
+              <span>Filter</span>
             </div>
             <Select
               value={statusFilter}
               onValueChange={(v) => setStatusFilter(v as StatusFilter)}
             >
-              <SelectTrigger className="w-[180px] h-10 rounded-none border-slate-200 darks:border-slate-800 bg-transparent text-[10px] tracking-widest uppercase focus:ring-1 focus:ring-[#4A7C65]">
-                <SelectValue placeholder="ALL STATES" />
+              <SelectTrigger className="w-[160px] h-10 rounded-md border-slate-200 darks:border-slate-800 bg-white darks:bg-slate-950 text-xs font-medium focus:ring-2 focus:ring-indigo-500">
+                <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
-              <SelectContent className="rounded-none border-[#4A7C65]/20 uppercase text-[9px] tracking-[0.2em]">
+              <SelectContent className="rounded-md border-slate-200 darks:border-slate-800 shadow-lg">
                 <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="active">Active Only</SelectItem>
+                <SelectItem value="inactive">Inactive Only</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* Table: Monolithic and Clean */}
-        <div className="overflow-hidden border border-slate-100 darks:border-slate-900 bg-white darks:bg-[#0F1110] transition-all">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-b border-slate-100 darks:border-slate-900 hover:bg-transparent">
-                <SortableHead
-                  field="title"
-                  label="Entity"
-                  sortField={sortField}
-                  sortDir={sortDir}
-                  onSort={handleSort}
-                />
-                <TableHead className="hidden md:table-cell text-[10px] tracking-[0.2em] font-bold uppercase text-slate-400 py-6">
-                  Description / Mandate
-                </TableHead>
-                <SortableHead
-                  field="status"
-                  label="Status"
-                  sortField={sortField}
-                  sortDir={sortDir}
-                  onSort={handleSort}
-                />
-                <SortableHead
-                  field="createdAt"
-                  label="Initiated"
-                  sortField={sortField}
-                  sortDir={sortDir}
-                  onSort={handleSort}
-                />
-                <TableHead className="w-12" />
-              </TableRow>
-            </TableHeader>
-
-            <TableBody className="text-sm font-light">
-              {filtered.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="py-24 text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="w-12 h-[1px] bg-[#4A7C65]/30" />
-                      <p className="text-[10px] tracking-[0.3em] uppercase text-slate-400">
-                        No matching records found in vault
-                      </p>
-                    </div>
-                  </TableCell>
+        {/* Main Data Table Card */}
+        <div className="bg-white darks:bg-slate-900 rounded-xl border border-slate-200 darks:border-slate-800 shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-50/50 darks:bg-slate-800/50 border-b border-slate-200 darks:border-slate-800 hover:bg-transparent">
+                  <SortableHead
+                    field="title"
+                    label="Entity Name"
+                    sortField={sortField}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                  />
+                  <TableHead className="hidden md:table-cell text-xs font-bold uppercase tracking-wider text-slate-500 py-4">
+                    Mandate Description
+                  </TableHead>
+                  <SortableHead
+                    field="status"
+                    label="Status"
+                    sortField={sortField}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                  />
+                  <SortableHead
+                    field="createdAt"
+                    label="Date Initiated"
+                    sortField={sortField}
+                    sortDir={sortDir}
+                    onSort={handleSort}
+                  />
+                  <TableHead className="w-16 px-6" />
                 </TableRow>
-              ) : (
-                filtered.map((society) => (
-                  <TableRow
-                    key={society.id}
-                    className="group border-b border-slate-50 darks:border-slate-900/50 hover:bg-slate-50/40 darks:hover:bg-[#151816] transition-colors"
-                  >
-                    <TableCell className="py-6 pl-6">
-                      <div className="font-semibold text-slate-900 darks:text-slate-100 tracking-wide italic">
-                        {society.title}
+              </TableHeader>
+
+              <TableBody>
+                {filtered.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-20 text-center">
+                      <div className="flex flex-col items-center justify-center gap-3">
+                        <div className="p-4 bg-slate-50 darks:bg-slate-800 rounded-full">
+                          <Database size={24} className="text-slate-300" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm font-semibold text-slate-900 darks:text-white">
+                            No records found
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            Try adjusting your search terms or filters
+                          </p>
+                        </div>
                       </div>
                     </TableCell>
-
-                    <TableCell className="hidden max-w-xs md:table-cell py-6 text-slate-400 font-light leading-relaxed">
-                      {society.description ? (
-                        <span className="line-clamp-1">
-                          {society.description}
-                        </span>
-                      ) : (
-                        <span className="text-[9px] tracking-widest opacity-30 uppercase">
-                          Undocumented
-                        </span>
-                      )}
-                    </TableCell>
-
-                    <TableCell className="py-6">
-                      <StatusBadge status={society.status} />
-                    </TableCell>
-
-                    <TableCell className="py-6 text-[10px] tracking-widest text-slate-400 uppercase">
-                      {format(new Date(society.createdAt), "dd MMM yyyy")}
-                    </TableCell>
-
-                    <TableCell className="py-6 text-right pr-6">
-                      <RowActions
-                        society={society}
-                        onEdit={handleEdit}
-                        onDelete={setDeleteTarget}
-                      />
-                    </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : (
+                  filtered.map((society) => (
+                    <TableRow
+                      key={society.id}
+                      className="group border-b border-slate-100 darks:border-slate-800/50 last:border-0 hover:bg-slate-50/50 darks:hover:bg-slate-800/30 transition-colors"
+                    >
+                      <TableCell className="py-4 px-6">
+                        <div className="font-bold text-slate-900 darks:text-slate-100">
+                          {society.title}
+                        </div>
+                      </TableCell>
+
+                      <TableCell className="hidden max-w-xs md:table-cell py-4 text-slate-500 darks:text-slate-400 text-xs leading-relaxed">
+                        {society.description ? (
+                          <span className="line-clamp-1">
+                            {society.description}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-medium opacity-40 uppercase italic tracking-tighter">
+                            No mandate provided
+                          </span>
+                        )}
+                      </TableCell>
+
+                      <TableCell className="py-4">
+                        <StatusBadge status={society.status} />
+                      </TableCell>
+
+                      <TableCell className="py-4 text-xs font-medium text-slate-500 darks:text-slate-400">
+                        <div className="flex items-center gap-2">
+                          <Calendar size={12} className="text-slate-400" />
+                          {format(new Date(society.createdAt), "MMM dd, yyyy")}
+                        </div>
+                      </TableCell>
+
+                      <TableCell className="py-4 text-right px-6">
+                        <RowActions
+                          society={society}
+                          onEdit={handleEdit}
+                          onDelete={setDeleteTarget}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
           {/* Footer Metrics */}
           {filtered.length > 0 && (
-            <div className="flex items-center justify-between px-8 py-6 bg-slate-50/50 darks:bg-[#080909]/50">
-              <div className="text-[9px] tracking-[0.4em] uppercase text-slate-400">
-                Vault Indexing:{" "}
-                <span className="text-slate-900 darks:text-white font-bold">
+            <div className="flex items-center justify-between px-6 py-4 bg-slate-50 darks:bg-slate-800/30 border-t border-slate-200 darks:border-slate-800">
+              <div className="text-[11px] font-medium text-slate-500 uppercase tracking-widest">
+                Showing{" "}
+                <span className="text-indigo-600 darks:text-indigo-400 font-bold">
                   {filtered.length}
                 </span>{" "}
-                of <span className="font-bold">{(societies ?? []).length}</span>
+                of <span className="font-bold">{(societies ?? []).length}</span>{" "}
+                entities
               </div>
-              <div className="w-24 h-[1px] bg-[#4A7C65]/20" />
+              <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase">
+                <Layers size={12} />
+                Registry Index Validated
+              </div>
             </div>
           )}
         </div>
 
-        {/* Delete Dialog: Clean and serious */}
+        {/* Delete Dialog */}
         <AlertDialog
           open={!!deleteTarget}
           onOpenChange={(open) => !open && setDeleteTarget(null)}
         >
-          <AlertDialogContent className="rounded-none border-[#4A7C65]/20 bg-white darks:bg-[#0F1110]">
+          <AlertDialogContent className="rounded-xl border-slate-200 darks:border-slate-800 bg-white darks:bg-slate-900 shadow-2xl">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-[12px] tracking-[0.3em] uppercase font-bold text-slate-900 darks:text-white">
-                Confirm Removal
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-sm font-light leading-relaxed pt-2">
-                You are about to purge{" "}
-                <span className="font-semibold italic text-[#4A7C65]">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-red-50 darks:bg-red-950/30 rounded-lg">
+                  <AlertTriangle className="text-red-600 h-5 w-5" />
+                </div>
+                <AlertDialogTitle className="text-lg font-bold text-slate-900 darks:text-white">
+                  Confirm Entity Deletion
+                </AlertDialogTitle>
+              </div>
+              <AlertDialogDescription className="text-sm text-slate-500 darks:text-slate-400 leading-relaxed">
+                Are you sure you want to remove{" "}
+                <span className="font-bold text-slate-900 darks:text-slate-100">
                   {deleteTarget?.title}
-                </span>{" "}
-                from the registry. This action is final and absolute.
+                </span>
+                ? This will permanently purge the record from the registry. This
+                action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="mt-8">
-              <AlertDialogCancel className="rounded-none text-[10px] tracking-widest uppercase font-semibold">
+            <AlertDialogFooter className="mt-6 gap-3">
+              <AlertDialogCancel className="rounded-md h-10 px-4 text-xs font-bold uppercase tracking-wider border-slate-200 darks:border-slate-800">
                 Cancel
               </AlertDialogCancel>
               <AlertDialogAction
-                className="rounded-none bg-[#4A7C65] text-white hover:bg-[#3d6653] text-[10px] tracking-widest uppercase"
+                className="rounded-md h-10 px-4 bg-red-600 text-white hover:bg-red-700 text-xs font-bold uppercase tracking-wider border-0 shadow-lg shadow-red-500/20"
                 onClick={handleDeleteConfirm}
                 disabled={isPending}
               >
-                Confirm Purge
+                {isPending ? "Processing..." : "Confirm Deletion"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

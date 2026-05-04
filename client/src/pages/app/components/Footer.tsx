@@ -22,7 +22,7 @@ export default function Footer() {
               <li key={link}>
                 <a
                   href="#"
-                  className="text-[13px] text-[#5C5748] darks:text-[#A8A298] hover:text-[#2D4A3E] darks:hover:text-[#4A7C65] transition-colors"
+                  className="text-[13px] text-[#5C5748] darks:text-[#A8A298] hover:text-indigo-600 darks:hover:text-indigo-600 transition-colors"
                 >
                   {link}
                 </a>
@@ -41,7 +41,7 @@ export default function Footer() {
                 <li key={link}>
                   <a
                     href="#"
-                    className="text-[13px] text-[#5C5748] darks:text-[#A8A298] hover:text-[#2D4A3E] darks:hover:text-[#4A7C65] transition-colors"
+                    className="text-[13px] text-[#5C5748] darks:text-[#A8A298] hover:text-indigo-600 darks:hover:text-indigo-600 transition-colors"
                   >
                     {link}
                   </a>
@@ -65,7 +65,7 @@ export default function Footer() {
               <li key={link}>
                 <a
                   href="#"
-                  className="text-[13px] text-[#5C5748] darks:text-[#A8A298] hover:text-[#2D4A3E] darks:hover:text-[#4A7C65] transition-colors"
+                  className="text-[13px] text-[#5C5748] darks:text-[#A8A298] hover:text-indigo-600 darks:hover:text-indigo-600 transition-colors"
                 >
                   {link}
                 </a>

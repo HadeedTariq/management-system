@@ -2,7 +2,15 @@ import { Link, Outlet } from "react-router-dom";
 
 import Footer from "./Footer";
 import { useState } from "react";
-import { Hexagon } from "lucide-react";
+import {
+  Hexagon,
+  LayoutDashboard,
+  Globe,
+  Calendar,
+  Info,
+  LogIn,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFullApp } from "@/store/hooks/useFullApp";
 import ProfileDropDown from "./ProfileDropDown";
@@ -12,83 +20,82 @@ const Layout = () => {
   const { user } = useFullApp();
 
   return (
-    <div className="flex flex-col w-full">
-      <div className={`${isDark ? "dark" : ""} mt-0`}>
-        <div className="min-h-screen bg-[#F5F3EE] text-[#1A1814] darks:bg-[#141210] darks:text-[#F2EFE8] font-['DM_Sans',_sans-serif] transition-colors duration-300">
-          <nav className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 md:px-10 border-b border-[#1A1814]/10 darks:border-[#F2EFE8]/10 bg-white darks:bg-[#1E1C19] transition-colors duration-300">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-[#2D4A3E] darks:bg-[#4A7C65] rounded-lg flex items-center justify-center text-[#F5F3EE]">
-                <Hexagon size={20} fill="currentColor" />
+    <div
+      className={`flex flex-col w-full min-h-screen ${isDark ? "dark" : ""}`}
+    >
+      <div className="flex flex-col w-full min-h-screen bg-slate-50 text-slate-900 darks:bg-slate-950 darks:text-slate-50 font-sans selection:bg-indigo-100 selection:text-indigo-900 transition-colors duration-300">
+        {/* Navigation Header */}
+        <nav className="sticky top-0 z-50 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur-md darks:border-slate-800/60 darks:bg-slate-900/80 transition-all duration-300">
+          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            {/* Logo Section */}
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 darks:bg-indigo-500">
+                <Hexagon size={22} strokeWidth={2.5} />
               </div>
               <Link
-                to={"/"}
-                className="font-['Playfair_Display',_serif] text-xl font-bold tracking-tight"
+                to="/"
+                className="text-xl font-bold tracking-tight text-slate-900 darks:text-white"
               >
                 Civi
-                <span className="text-[#C8873A] darks:text-[#E09A4A]">
+                <span className="text-indigo-600 darks:text-indigo-400">
                   Connect
                 </span>
               </Link>
             </div>
 
-            <ul className="hidden md:flex items-center gap-7">
-              <li>
+            {/* Desktop Navigation Links */}
+            <div className="hidden md:flex items-center gap-1">
+              {[
+                { label: "Features", icon: LayoutDashboard, href: "#" },
+                { label: "Societies", icon: Globe, href: "#" },
+                { label: "Events", icon: Calendar, href: "#" },
+                { label: "About", icon: Info, href: "#" },
+              ].map((item) => (
                 <a
-                  href="#"
-                  className="text-[#5C5748] darks:text-[#A8A298] hover:text-[#2D4A3E] darks:hover:text-[#4A7C65] text-sm transition-colors"
+                  key={item.label}
+                  href={item.href}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:text-indigo-600 darks:text-slate-400 darks:hover:text-indigo-400 rounded-lg hover:bg-slate-100 darks:hover:bg-slate-800"
                 >
-                  Features
+                  <item.icon size={16} />
+                  {item.label}
                 </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-[#5C5748] darks:text-[#A8A298] hover:text-[#2D4A3E] darks:hover:text-[#4A7C65] text-sm transition-colors"
-                >
-                  Societies
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-[#5C5748] darks:text-[#A8A298] hover:text-[#2D4A3E] darks:hover:text-[#4A7C65] text-sm transition-colors"
-                >
-                  Events
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-[#5C5748] darks:text-[#A8A298] hover:text-[#2D4A3E] darks:hover:text-[#4A7C65] text-sm transition-colors"
-                >
-                  About
-                </a>
-              </li>
-            </ul>
+              ))}
+            </div>
 
-            {user ? (
-              <ProfileDropDown />
-            ) : (
-              <div className="flex items-center gap-3">
-                <Link to={"/authenticate/"}>
-                  <Button
-                    variant="outline"
-                    className="hidden sm:flex border-[#1A1814]/10 darks:border-[#F2EFE8]/10 text-[#1A1814] darks:text-[#F2EFE8] hover:bg-[#EDEAE3] darks:hover:bg-[#252320] bg-transparent h-9 px-5"
-                  >
-                    Sign in
-                  </Button>
-                </Link>
-                <Link to={"/authenticate/"}>
-                  <Button className="bg-[#2D4A3E] hover:bg-[#2D4A3E]/90 text-[#F5F3EE] darks:bg-[#4A7C65] darks:hover:bg-[#4A7C65]/90 h-9 px-5">
-                    Get Started
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </nav>
+            {/* Action Section */}
+            <div className="flex items-center gap-3">
+              {user ? (
+                <ProfileDropDown />
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Link to="/authenticate/">
+                    <Button
+                      variant="ghost"
+                      className="hidden sm:flex h-10 px-5 text-sm font-semibold text-slate-700 darks:text-slate-300 hover:bg-slate-100 darks:hover:bg-slate-800"
+                    >
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Sign in
+                    </Button>
+                  </Link>
+                  <Link to="/authenticate/">
+                    <Button className="h-10 bg-indigo-600 px-6 text-sm font-semibold text-white shadow-md shadow-indigo-500/25 transition-all hover:bg-indigo-700 hover:shadow-indigo-500/40 darks:bg-indigo-500 darks:hover:bg-indigo-400 rounded-lg">
+                      Get Started
+                      <ChevronRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </nav>
+
+        {/* Main Content Area */}
+        <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <Outlet />
-          <Footer />
-        </div>
+        </main>
+
+        {/* Footer Area */}
+        <Footer />
       </div>
     </div>
   );
