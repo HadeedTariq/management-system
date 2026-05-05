@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { FileText, ImageIcon, Eye, Megaphone } from "lucide-react";
 
 // shadcn/ui components
@@ -29,21 +28,10 @@ import { Switch } from "@/components/ui/switch"; // Assuming you have the shadcn
 import ImageUploader from "@/components/ImageUploader";
 import { useCreatePost } from "../../hooks/society-head/useSocietyHead";
 import { useParams } from "react-router-dom";
-// import { useCreatePost } from "@/hooks/society-head/useSocietyPosts";
-
-// ─── ZOD VALIDATOR ──────────────────────────────────────────────────────────
-export const createPostSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(255, "Title must be 255 characters or less"),
-  description: z.string().optional(),
-  isPublished: z.boolean().default(true),
-});
-
-export type CreatePostInput = z.infer<typeof createPostSchema>;
-
-// ─── COMPONENT ──────────────────────────────────────────────────────────────
+import {
+  CreatePostInput,
+  createPostSchema,
+} from "../../validators/society-head/society-head.validator";
 export default function CreateSocietyPost() {
   const { id } = useParams();
   const [postImage, setPostImage] = useState<File | null>(null);

@@ -24,8 +24,29 @@ router.delete(
   asyncHandler(societyHeadController.deleteSocietyPost),
 );
 router.get(
-  "/society-posts/:id",
+  "/society-posts/details/:id",
   asyncHandler(societyHeadController.getSocietyPostById),
+);
+// ~ society events management
+router.get(
+  "/society-events/:id",
+  asyncHandler(societyHeadController.getMySocietiesEvents),
+);
+router.post(
+  "/society-events/create/:id",
+  asyncHandler(societyHeadController.createSocietyEvent),
+);
+router.put(
+  "/society-events/:id",
+  asyncHandler(societyHeadController.updateSocietyEvent),
+);
+router.delete(
+  "/society-events/:id",
+  asyncHandler(societyHeadController.deleteSocietyEvent),
+);
+router.get(
+  "/society-events/details/:id",
+  asyncHandler(societyHeadController.getSocietyEventById),
 );
 
 export { router as societyHeadRouter };

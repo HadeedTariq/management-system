@@ -2,7 +2,6 @@ import { toast } from "@/hooks/use-toast";
 import { societyHeadApi } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { CreatePostInput } from "../../routes/society-head/CreateSocietyPost";
 
 export const useGetMySocieties = () => {
   const queryKey = ["get-my-societies"];
@@ -41,6 +40,26 @@ export const useGetMySocietyPosts = (id: string) => {
 
   return result;
 };
+
+export const useGetSocietyPostDetails = (postId: string) => {
+  const queryKey = [`get-society-post-details-${postId}`];
+  const url = `/society-posts/details/${postId}`;
+
+  const result = useQuery({
+    queryKey: [queryKey],
+    queryFn: async () => {
+      const { data } = await societyHeadApi.get(url);
+      return data as MySocietyPost;
+    },
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
+  });
+
+  return result;
+};
+
 export const useCreatePost = (societyId: string) => {
   const navigate = useNavigate();
 
@@ -76,6 +95,91 @@ export const useCreatePost = (societyId: string) => {
         description:
           error.response?.data?.message ||
           "Failed to create post. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  return result;
+};
+
+export const useUpdatePost = (societyId: string, postId: string) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const result = useMutation({
+    mutationKey: ["update-society-post", societyId, postId],
+
+    mutationFn: async (formData: FormData) => {
+      const { data } = await societyHeadApi.put(
+        `/society-posts/${postId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      return data;
+    },
+
+    onSuccess: () => {
+      toast({
+        title: "Post updated",
+        description: "Your post has been updated successfully.",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`get-my-society-posts-${societyId}`],
+      });
+
+      navigate(`/society-head-dashboard/my-society/posts/${societyId}`);
+    },
+
+    onError: (error: ErrResponse) => {
+      toast({
+        title: "Post update failed",
+        description:
+          error.response?.data?.message ||
+          "Failed to update post. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  return result;
+};
+
+export const useDeletePost = (societyId: string) => {
+  const queryClient = useQueryClient();
+
+  const result = useMutation({
+    mutationKey: ["delete-society-post", societyId],
+
+    mutationFn: async (postId: string) => {
+      const { data } = await societyHeadApi.delete(`/society-posts/${postId}`);
+
+      return data;
+    },
+
+    onSuccess: () => {
+      toast({
+        title: "Post deleted",
+        description: "The post has been removed successfully.",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`get-my-society-posts-${societyId}`],
+      });
+    },
+
+    onError: (error: ErrResponse) => {
+      toast({
+        title: "Delete failed",
+        description:
+          error.response?.data?.message ||
+          "Failed to delete post. Please try again.",
         variant: "destructive",
       });
     },

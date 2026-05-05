@@ -29,6 +29,7 @@ import { seedUsers } from "./scripts/dummy-user-creation";
 import { seedSocietyMembers } from "./scripts/dummy-societies";
 import { societyHeadRouter } from "./routes/society-head/societyHead.routes";
 import { seedSocietyPosts } from "./scripts/dummy-society-posts";
+import { seedSocietyEvents } from "./scripts/dummy-society-events";
 
 const app: Express = express();
 
@@ -186,6 +187,15 @@ passport.deserializeUser(
 // }).then(() => {
 //   console.log("====================================");
 //   console.log("posts seeded");
+//   console.log("====================================");
+// });
+
+// seedSocietyEvents({
+//   societyId: "08936f16-2347-4d6c-b6d7-3bc1d96c3c7f",
+//   authorId: "75061f25-922e-472e-9fec-3c4955ae37d7",
+// }).then(() => {
+//   console.log("====================================");
+//   console.log("events seeded");
 //   console.log("====================================");
 // });
 

@@ -7,6 +7,7 @@ import { db } from "@/db/client";
 import {
   emailOtps,
   societies,
+  societyEvents,
   societyMembers,
   societyPosts,
   users,
@@ -16,7 +17,10 @@ import {
   multerConfig,
   streamUploadToCloudinary,
 } from "@/utils/cloudinary.util";
-import { createSocietyPostSchema } from "./societyHead.validator";
+import {
+  createSocietyEventSchema,
+  createSocietyPostSchema,
+} from "./societyHead.validator";
 
 const upload = multerConfig.single("image");
 
@@ -544,6 +548,474 @@ class SocietyHeadController {
 
       return res.status(500).json({
         message: "Failed to fetch post.",
+      });
+    }
+  }
+
+  async getMySocietiesEvents(req: Request, res: Response, next: NextFunction) {
+    const controller = "getMySocietiesEvents";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "get_my_societies_events_initiated",
+        requestId,
+      });
+
+      const { id: societyId } = req.params;
+
+      if (!societyId || !uuidErrorHandler(societyId)) {
+        logger.warn({
+          controller,
+          event: "invalid_society_id",
+          requestId,
+          metadata: { societyId },
+        });
+
+        return res.status(400).json({
+          message: "Valid society id is required.",
+        });
+      }
+
+      const userId = req.body.user.id;
+
+      const values = {
+        id: societyEvents.id,
+        title: societyEvents.title,
+        description: societyEvents.description,
+        image: societyEvents.image,
+        location: societyEvents.location,
+        startTime: societyEvents.startTime,
+        endTime: societyEvents.endTime,
+        status: societyEvents.status,
+        createdAt: societyEvents.createdAt,
+      };
+
+      const result = await db
+        .select(values)
+        .from(societyEvents)
+        .innerJoin(
+          societyMembers,
+          eq(societyEvents.societyId, societyMembers.societyId),
+        )
+        .where(
+          and(
+            eq(societyEvents.societyId, societyId),
+            eq(societyEvents.authorId, userId),
+            eq(societyMembers.userId, userId),
+            eq(societyMembers.role, "society_head"),
+            eq(societyMembers.status, "active"),
+          ),
+        )
+        .orderBy(desc(societyEvents.createdAt));
+
+      logger.info({
+        controller,
+        event: "get_my_societies_events_success",
+        requestId,
+        metadata: { count: result.length },
+      });
+
+      return res.status(200).json(result);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "get_my_societies_events_failed",
+        requestId,
+        metadata: { error },
+      });
+
+      return next(error);
+    }
+  }
+
+  async createSocietyEvent(req: Request, res: Response, next: NextFunction) {
+    const controller = "createSocietyEvent";
+    const requestId = req.id;
+
+    const { id: societyId } = req.params;
+    const userId = req.body.user?.id;
+
+    logger.info({
+      controller,
+      event: "society_event_creation_initiated",
+      requestId,
+      metadata: { societyId, userId },
+    });
+
+    if (!societyId || !uuidErrorHandler(societyId)) {
+      logger.warn({
+        controller,
+        event: "invalid_society_id",
+        requestId,
+        metadata: { societyId },
+      });
+
+      return res.status(400).json({
+        message: "Valid society id is required.",
+      });
+    }
+
+    if (!userId || !uuidErrorHandler(userId)) {
+      logger.warn({
+        controller,
+        event: "invalid_user_id",
+        requestId,
+        metadata: { userId },
+      });
+
+      return res.status(400).json({
+        message: "Valid user id is required.",
+      });
+    }
+
+    upload(req, res, async (err) => {
+      if (err) {
+        logger.warn({
+          controller,
+          event: "multer_upload_failed",
+          requestId,
+          error: err.message,
+        });
+
+        return res.status(400).json({
+          message: "Image upload failed.",
+        });
+      }
+
+      const parsed = createSocietyEventSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        logger.warn({
+          controller,
+          event: "validation_failed",
+          requestId,
+          errors: parsed.error.flatten(),
+        });
+
+        return res.status(400).json({
+          message: "Validation failed.",
+        });
+      }
+
+      const { title, description, location, startTime, endTime, status } =
+        parsed.data;
+
+      try {
+        let imageUrl: string | null = null;
+
+        if (req.file) {
+          imageUrl = await streamUploadToCloudinary(req.file.buffer);
+        }
+
+        const inserted = await db
+          .insert(societyEvents)
+          .values({
+            societyId,
+            authorId: userId,
+            title,
+            description,
+            image: imageUrl,
+            location,
+            startTime: new Date(startTime),
+            endTime: endTime ? new Date(endTime) : null,
+            status: status ?? "upcoming",
+          })
+          .returning({ id: societyEvents.id });
+
+        logger.info({
+          controller,
+          event: "society_event_creation_success",
+          requestId,
+          metadata: { eventId: inserted[0].id },
+        });
+
+        return res.status(201).json({
+          message: "Event created successfully.",
+        });
+      } catch (error: any) {
+        const pgError = error?.cause;
+
+        if (pgError?.code) {
+          switch (pgError.code) {
+            case "23503":
+              logger.warn({
+                controller,
+                event: "foreign_key_violation",
+                requestId,
+                detail: pgError.detail,
+              });
+
+              return res.status(400).json({
+                message: "Invalid society or user reference.",
+              });
+
+            case "23502":
+              logger.warn({
+                controller,
+                event: "not_null_violation",
+                requestId,
+                detail: pgError.detail,
+              });
+
+              return res.status(400).json({
+                message: "Missing required database field.",
+              });
+
+            default:
+              logger.error({
+                controller,
+                event: "unhandled_pg_error",
+                requestId,
+                code: pgError.code,
+                detail: pgError.detail,
+              });
+
+              return res.status(500).json({
+                message: "Database error occurred.",
+              });
+          }
+        }
+
+        logger.error({
+          controller,
+          event: "society_event_creation_failed",
+          requestId,
+          error: error.message,
+        });
+
+        return res.status(500).json({
+          message: "Failed to create event.",
+        });
+      }
+    });
+  }
+
+  async updateSocietyEvent(req: Request, res: Response, next: NextFunction) {
+    const controller = "updateSocietyEvent";
+    const requestId = req.id;
+
+    const { id: eventId } = req.params;
+    const userId = req.body.user?.id;
+
+    logger.info({
+      controller,
+      event: "society_event_update_initiated",
+      requestId,
+      metadata: { eventId, userId },
+    });
+
+    if (!eventId || !uuidErrorHandler(eventId)) {
+      logger.warn({
+        controller,
+        event: "invalid_event_id",
+        requestId,
+        metadata: { eventId },
+      });
+
+      return res.status(400).json({
+        message: "Valid event id is required.",
+      });
+    }
+
+    if (!userId || !uuidErrorHandler(userId)) {
+      return res.status(400).json({
+        message: "Valid user id is required.",
+      });
+    }
+
+    upload(req, res, async (err) => {
+      if (err) {
+        return res.status(400).json({
+          message: "Image upload failed.",
+        });
+      }
+
+      const parsed = createSocietyEventSchema.safeParse(req.body);
+
+      if (!parsed.success) {
+        return res.status(400).json({
+          message: "Validation failed.",
+        });
+      }
+
+      const { title, description, location, startTime, endTime, status } =
+        parsed.data;
+
+      try {
+        let imageUrl: string | undefined;
+
+        if (req.file) {
+          imageUrl = await streamUploadToCloudinary(req.file.buffer);
+        }
+
+        const existing = await db
+          .select()
+          .from(societyEvents)
+          .where(eq(societyEvents.id, eventId));
+
+        if (!existing.length) {
+          return res.status(404).json({
+            message: "Event not found.",
+          });
+        }
+
+        if (existing[0].authorId !== userId) {
+          return res.status(403).json({
+            message: "You are not allowed to update this event.",
+          });
+        }
+
+        await db
+          .update(societyEvents)
+          .set({
+            title,
+            description,
+            location,
+            startTime: new Date(startTime),
+            endTime: endTime ? new Date(endTime) : null,
+            status,
+            ...(imageUrl && { image: imageUrl }),
+          })
+          .where(eq(societyEvents.id, eventId));
+
+        logger.info({
+          controller,
+          event: "society_event_update_success",
+          requestId,
+          metadata: { eventId },
+        });
+
+        return res.status(200).json({
+          message: "Event updated successfully.",
+        });
+      } catch (error: any) {
+        logger.error({
+          controller,
+          event: "society_event_update_failed",
+          requestId,
+          error: error.message,
+        });
+
+        return res.status(500).json({
+          message: "Failed to update event.",
+        });
+      }
+    });
+  }
+
+  async deleteSocietyEvent(req: Request, res: Response, next: NextFunction) {
+    const controller = "deleteSocietyEvent";
+    const requestId = req.id;
+
+    const { id: eventId } = req.params;
+    const userId = req.body.user?.id;
+
+    logger.info({
+      controller,
+      event: "society_event_delete_initiated",
+      requestId,
+      metadata: { eventId, userId },
+    });
+
+    if (!eventId || !uuidErrorHandler(eventId)) {
+      return res.status(400).json({
+        message: "Valid event id is required.",
+      });
+    }
+
+    if (!userId || !uuidErrorHandler(userId)) {
+      return res.status(400).json({
+        message: "Valid user id is required.",
+      });
+    }
+
+    try {
+      const existing = await db
+        .select()
+        .from(societyEvents)
+        .where(eq(societyEvents.id, eventId));
+
+      if (!existing.length) {
+        return res.status(404).json({
+          message: "Event not found.",
+        });
+      }
+
+      if (existing[0].authorId !== userId) {
+        return res.status(403).json({
+          message: "You are not allowed to delete this event.",
+        });
+      }
+
+      await db.delete(societyEvents).where(eq(societyEvents.id, eventId));
+
+      logger.info({
+        controller,
+        event: "society_event_delete_success",
+        requestId,
+        metadata: { eventId },
+      });
+
+      return res.status(200).json({
+        message: "Event deleted successfully.",
+      });
+    } catch (error: any) {
+      logger.error({
+        controller,
+        event: "society_event_delete_failed",
+        requestId,
+        error: error.message,
+      });
+
+      return res.status(500).json({
+        message: "Failed to delete event.",
+      });
+    }
+  }
+  async getSocietyEventById(req: Request, res: Response, next: NextFunction) {
+    const controller = "getSocietyEventById";
+    const requestId = req.id;
+
+    const { id: eventId } = req.params;
+
+    logger.info({
+      controller,
+      event: "get_society_event_initiated",
+      requestId,
+      metadata: { eventId },
+    });
+
+    if (!eventId || !uuidErrorHandler(eventId)) {
+      return res.status(400).json({
+        message: "Valid event id is required.",
+      });
+    }
+
+    try {
+      const event = await db
+        .select()
+        .from(societyEvents)
+        .where(eq(societyEvents.id, eventId));
+
+      if (!event.length) {
+        return res.status(404).json({
+          message: "Event not found.",
+        });
+      }
+
+      return res.status(200).json(event[0]);
+    } catch (error: any) {
+      logger.error({
+        controller,
+        event: "get_society_event_failed",
+        requestId,
+        error: error.message,
+      });
+
+      return res.status(500).json({
+        message: "Failed to fetch event.",
       });
     }
   }

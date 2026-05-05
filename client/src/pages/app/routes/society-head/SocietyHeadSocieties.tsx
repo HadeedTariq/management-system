@@ -317,10 +317,6 @@ const SocietyHeadSocieties = () => {
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm">
-                              <Users className="w-4 h-4 text-slate-500" />
-                              Manage Users
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm">
                               <Calendar className="w-4 h-4 text-slate-500" />
                               Manage Events
                             </DropdownMenuItem>

@@ -26,6 +26,7 @@ import SocietyHeadDashboardFrontPage from "./pages/app/routes/society-head/Socie
 import SocietyHeadSocieties from "./pages/app/routes/society-head/SocietyHeadSocieties";
 import MySocietyPosts from "./pages/app/routes/society-head/MySocietyPosts";
 import CreateSocietyPost from "./pages/app/routes/society-head/CreateSocietyPost";
+import UpdateSocietyPost from "./pages/app/routes/society-head/UpdateSocietyPost";
 
 function App() {
   const { user } = useFullApp();
@@ -91,6 +92,10 @@ function App() {
         <Route
           path="my-society/:id/create-post"
           element={<CreateSocietyPost />}
+        />
+        <Route
+          path="my-society/:id/update-post/:postId"
+          element={<UpdateSocietyPost />}
         />
       </Route>
     </Routes>

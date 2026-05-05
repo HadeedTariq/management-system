@@ -28,17 +28,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 // Existing imports
-import { useGetMySocietyPosts } from "../../hooks/society-head/useSocietyHead";
+import {
+  useDeletePost,
+  useGetMySocietyPosts,
+} from "../../hooks/society-head/useSocietyHead";
 import LoadingBar from "@/components/LoadingBar";
 import SocietyHeadErrorComponent from "../../components/society-head/SocietyHeadErrorComponent";
-
-type MySocietyPost = {
-  id: string;
-  title: string;
-  description: string | null;
-  image: string | null;
-  createdAt: string;
-};
 
 const MySocietyPosts = () => {
   const { id } = useParams();
@@ -49,6 +44,8 @@ const MySocietyPosts = () => {
     isError,
     error,
   } = useGetMySocietyPosts(id as string);
+
+  const { mutate, isPending } = useDeletePost(id as string);
 
   if (isLoading) return <LoadingBar />;
 
@@ -133,10 +130,20 @@ const MySocietyPosts = () => {
                       align="end"
                       className="w-40 rounded-lg"
                     >
-                      <DropdownMenuItem className="gap-2 cursor-pointer font-medium text-slate-600 darks:text-slate-300">
-                        <Pencil className="h-4 w-4" /> Edit Post
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="gap-2 cursor-pointer font-medium text-red-600 focus:bg-red-50 focus:text-red-700 darks:text-red-500 darks:focus:bg-red-950/30 darks:focus:text-red-400">
+                      <Link
+                        to={`/society-head-dashboard/my-society/${id}/update-post/${post.id}`}
+                      >
+                        <DropdownMenuItem className="gap-2 cursor-pointer font-medium text-slate-600 darks:text-slate-300">
+                          <Pencil className="h-4 w-4" /> Edit Post
+                        </DropdownMenuItem>
+                      </Link>
+                      <DropdownMenuItem
+                        className="gap-2 cursor-pointer font-medium text-red-600 focus:bg-red-50 focus:text-red-700 darks:text-red-500 darks:focus:bg-red-950/30 darks:focus:text-red-400"
+                        onClick={() => {
+                          mutate(post.id);
+                        }}
+                        disabled={isPending}
+                      >
                         <Trash2 className="h-4 w-4" /> Delete Post
                       </DropdownMenuItem>
                     </DropdownMenuContent>
