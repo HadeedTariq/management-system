@@ -7,6 +7,10 @@ const router = Router();
 
 router.use(checkAuth);
 router.get("/my-societies", asyncHandler(societyHeadController.getMySocieties));
+router.get("/my-posts", asyncHandler(societyHeadController.getMyPosts));
+router.get("/my-events", asyncHandler(societyHeadController.getMyEvents));
+
+// ~ societies post management
 router.get(
   "/society-posts/:id",
   asyncHandler(societyHeadController.getMySocietiesPosts),

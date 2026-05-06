@@ -39,25 +39,26 @@ const sidebarItems = [
   },
 
   {
-    title: "Memberships",
-    icon: <UserCog className="h-5 w-5" />,
-    pathName: "/society-head-dashboard/memberships",
-  },
-
-  {
     title: "Event Management",
     icon: <CalendarDays className="h-5 w-5" />,
     pathName: undefined,
     items: [
       {
         title: "All Events",
-        url: "/society-head-dashboard/events",
+        url: "/society-head-dashboard/my-events",
         icon: <CalendarDays className="h-4 w-4" />,
       },
+    ],
+  },
+  {
+    title: "Post Management",
+    icon: <CalendarDays className="h-5 w-5" />,
+    pathName: undefined,
+    items: [
       {
-        title: "Pending Approvals",
-        url: "/society-head-dashboard/events/pending",
-        icon: <ShieldCheck className="h-4 w-4" />,
+        title: "All Posts",
+        url: "/society-head-dashboard/my-posts",
+        icon: <CalendarDays className="h-4 w-4" />,
       },
     ],
   },

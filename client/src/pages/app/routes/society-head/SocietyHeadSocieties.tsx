@@ -316,10 +316,14 @@ const SocietyHeadSocieties = () => {
                               Management
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm">
-                              <Calendar className="w-4 h-4 text-slate-500" />
-                              Manage Events
-                            </DropdownMenuItem>
+                            <Link
+                              to={`/society-head-dashboard/my-society/events/${society.id}`}
+                            >
+                              <DropdownMenuItem className="flex items-center gap-2 cursor-pointer text-sm">
+                                <Calendar className="w-4 h-4 text-slate-500" />
+                                Manage Events
+                              </DropdownMenuItem>
+                            </Link>
                             <Link
                               to={`/society-head-dashboard/my-society/posts/${society.id}`}
                             >

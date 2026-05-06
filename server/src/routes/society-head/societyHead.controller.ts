@@ -100,6 +100,155 @@ class SocietyHeadController {
     }
   }
 
+  async getMyPosts(req: Request, res: Response, next: NextFunction) {
+    const controller = "getMyPosts";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "get_my_posts_initiated",
+        requestId,
+      });
+
+      const userId = req.body.user?.id;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: { userId },
+        });
+
+        return res.status(400).json({
+          message: "Valid user id is required.",
+        });
+      }
+
+      const values = {
+        id: societyPosts.id,
+        title: societyPosts.title,
+        description: societyPosts.description,
+        image: societyPosts.image,
+        createdAt: societyPosts.createdAt,
+        societyId: societyPosts.societyId,
+      };
+
+      const result = await db
+        .select(values)
+        .from(societyPosts)
+        .innerJoin(
+          societyMembers,
+          eq(societyPosts.societyId, societyMembers.societyId),
+        )
+        .where(
+          and(
+            eq(societyPosts.authorId, userId),
+            eq(societyMembers.userId, userId),
+            eq(societyMembers.role, "society_head"),
+            eq(societyMembers.status, "active"),
+            eq(societyPosts.isPublished, true),
+          ),
+        )
+        .orderBy(desc(societyPosts.createdAt));
+
+      logger.info({
+        controller,
+        event: "get_my_posts_success",
+        requestId,
+        metadata: { count: result.length },
+      });
+
+      return res.status(200).json(result);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "get_my_posts_failed",
+        requestId,
+        metadata: { error },
+      });
+
+      return next(error);
+    }
+  }
+
+  async getMyEvents(req: Request, res: Response, next: NextFunction) {
+    const controller = "getMyEvents";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "get_my_events_initiated",
+        requestId,
+      });
+
+      const userId = req.body.user?.id;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: { userId },
+        });
+
+        return res.status(400).json({
+          message: "Valid user id is required.",
+        });
+      }
+
+      const values = {
+        id: societyEvents.id,
+        title: societyEvents.title,
+        description: societyEvents.description,
+        image: societyEvents.image,
+        location: societyEvents.location,
+        startTime: societyEvents.startTime,
+        endTime: societyEvents.endTime,
+        status: societyEvents.status,
+        createdAt: societyEvents.createdAt,
+        societyId: societyEvents.societyId,
+      };
+
+      const result = await db
+        .select(values)
+        .from(societyEvents)
+        .innerJoin(
+          societyMembers,
+          eq(societyEvents.societyId, societyMembers.societyId),
+        )
+        .where(
+          and(
+            eq(societyEvents.authorId, userId),
+            eq(societyMembers.userId, userId),
+            eq(societyMembers.role, "society_head"),
+            eq(societyMembers.status, "active"),
+          ),
+        )
+        .orderBy(desc(societyEvents.createdAt));
+
+      logger.info({
+        controller,
+        event: "get_my_events_success",
+        requestId,
+        metadata: { count: result.length },
+      });
+
+      return res.status(200).json(result);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "get_my_events_failed",
+        requestId,
+        metadata: { error },
+      });
+
+      return next(error);
+    }
+  }
+
   async getMySocietiesPosts(req: Request, res: Response, next: NextFunction) {
     const controller = "getMySocietiesPosts";
     const requestId = req.id;

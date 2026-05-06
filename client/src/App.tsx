@@ -27,6 +27,11 @@ import SocietyHeadSocieties from "./pages/app/routes/society-head/SocietyHeadSoc
 import MySocietyPosts from "./pages/app/routes/society-head/MySocietyPosts";
 import CreateSocietyPost from "./pages/app/routes/society-head/CreateSocietyPost";
 import UpdateSocietyPost from "./pages/app/routes/society-head/UpdateSocietyPost";
+import MySocietyEvents from "./pages/app/routes/society-head/MySocietyEvents";
+import CreateSocietyEvent from "./pages/app/routes/society-head/CreateSocietyEvent";
+import UpdateSocietyEvent from "./pages/app/routes/society-head/UpdateSocietyEvent";
+import AllPosts from "./pages/app/routes/society-head/AllPosts";
+import AllEvents from "./pages/app/routes/society-head/AllEvents";
 
 function App() {
   const { user } = useFullApp();
@@ -88,14 +93,25 @@ function App() {
       >
         <Route index element={<SocietyHeadDashboardFrontPage />} />
         <Route path="my-societies" element={<SocietyHeadSocieties />} />
+        <Route path="my-posts" element={<AllPosts />} />
+        <Route path="my-events" element={<AllEvents />} />
         <Route path="my-society/posts/:id" element={<MySocietyPosts />} />
+        <Route path="my-society/events/:id" element={<MySocietyEvents />} />
         <Route
           path="my-society/:id/create-post"
           element={<CreateSocietyPost />}
         />
         <Route
+          path="my-society/:id/create-event"
+          element={<CreateSocietyEvent />}
+        />
+        <Route
           path="my-society/:id/update-post/:postId"
           element={<UpdateSocietyPost />}
+        />
+        <Route
+          path="my-society/:id/update-event/:eventId"
+          element={<UpdateSocietyEvent />}
         />
       </Route>
     </Routes>
