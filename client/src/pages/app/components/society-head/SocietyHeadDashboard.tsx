@@ -62,18 +62,6 @@ const sidebarItems = [
       },
     ],
   },
-
-  {
-    title: "Announcements",
-    icon: <Megaphone className="h-5 w-5" />,
-    pathName: "/society-head-dashboard/announcements",
-  },
-
-  {
-    title: "Settings",
-    icon: <Settings className="h-5 w-5" />,
-    pathName: "/society-head-dashboard/settings",
-  },
 ];
 
 function SocietyHeadDashBoard() {
