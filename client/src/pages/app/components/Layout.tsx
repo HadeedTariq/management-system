@@ -46,19 +46,19 @@ const Layout = () => {
             {/* Desktop Navigation Links */}
             <div className="hidden md:flex items-center gap-1">
               {[
-                { label: "Features", icon: LayoutDashboard, href: "#" },
-                { label: "Societies", icon: Globe, href: "#" },
-                { label: "Events", icon: Calendar, href: "#" },
-                { label: "About", icon: Info, href: "#" },
+                { label: "Features", icon: LayoutDashboard, href: "/features" },
+                { label: "Societies", icon: Globe, href: "/societies" },
+                { label: "Events", icon: Calendar, href: "/events" },
+                { label: "About", icon: Info, href: "/about-us" },
               ].map((item) => (
-                <a
+                <Link
                   key={item.label}
-                  href={item.href}
+                  to={item.href}
                   className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:text-indigo-600 darks:text-slate-400 darks:hover:text-indigo-400 rounded-lg hover:bg-slate-100 darks:hover:bg-slate-800"
                 >
                   <item.icon size={16} />
                   {item.label}
-                </a>
+                </Link>
               ))}
             </div>
 

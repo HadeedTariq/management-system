@@ -32,6 +32,9 @@ import CreateSocietyEvent from "./pages/app/routes/society-head/CreateSocietyEve
 import UpdateSocietyEvent from "./pages/app/routes/society-head/UpdateSocietyEvent";
 import AllPosts from "./pages/app/routes/society-head/AllPosts";
 import AllEvents from "./pages/app/routes/society-head/AllEvents";
+import AllClientSideSocieties from "./pages/app/routes/AllClientSideSocieties";
+import AllClientSideEvents from "./pages/app/routes/AllClientSideEvents";
+import SocietyDetailsPage from "./pages/app/routes/SocietyDetailsPage";
 
 function App() {
   const { user } = useFullApp();
@@ -51,6 +54,9 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="about-us" element={<AboutUs />} />
+        <Route path="societies" element={<AllClientSideSocieties />} />
+        <Route path="societies/:id" element={<SocietyDetailsPage />} />
+        <Route path="events" element={<AllClientSideEvents />} />
       </Route>
 
       <Route

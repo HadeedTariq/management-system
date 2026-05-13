@@ -30,6 +30,7 @@ import { seedSocietyMembers } from "./scripts/dummy-societies";
 import { societyHeadRouter } from "./routes/society-head/societyHead.routes";
 import { seedSocietyPosts } from "./scripts/dummy-society-posts";
 import { seedSocietyEvents } from "./scripts/dummy-society-events";
+import { studentRouter } from "./routes/student/student.routes";
 
 const app: Express = express();
 
@@ -204,6 +205,7 @@ app.use(requestLogger);
 app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
 app.use("/society-head", societyHeadRouter);
+app.use("/student", studentRouter);
 
 // Swagger UI
 app.use(openAPIRouter);

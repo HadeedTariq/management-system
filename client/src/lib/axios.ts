@@ -16,4 +16,9 @@ const societyHeadApi = axios.create({
   withCredentials: true,
 });
 
-export { authApi, adminApi, societyHeadApi };
+const studentApi = axios.create({
+  baseURL: `${url}/student`,
+  withCredentials: true,
+});
+
+export { authApi, adminApi, societyHeadApi, studentApi };
