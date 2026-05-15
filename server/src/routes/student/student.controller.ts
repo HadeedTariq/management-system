@@ -298,6 +298,108 @@ class StudentController {
       return next(error);
     }
   }
+
+  async getEventDetails(req: Request, res: Response, next: NextFunction) {
+    const controller = "getEventDetails";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "get_event_details_initiated",
+        requestId,
+      });
+
+      const { id } = req.params;
+
+      if (!id || !uuidErrorHandler(id)) {
+        logger.warn({
+          controller,
+          event: "invalid_event_id",
+          requestId,
+          metadata: {
+            eventId: id,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid event id provided.",
+        });
+      }
+
+      const result = await db
+        .select({
+          id: societyEvents.id,
+
+          title: societyEvents.title,
+          description: societyEvents.description,
+
+          image: societyEvents.image,
+
+          location: societyEvents.location,
+
+          startTime: societyEvents.startTime,
+          endTime: societyEvents.endTime,
+
+          status: societyEvents.status,
+
+          createdAt: societyEvents.createdAt,
+          updatedAt: societyEvents.updatedAt,
+
+          society: {
+            id: societies.id,
+            title: societies.title,
+            description: societies.description,
+            status: societies.status,
+
+            createdAt: societies.createdAt,
+            updatedAt: societies.updatedAt,
+          },
+        })
+        .from(societyEvents)
+        .innerJoin(societies, eq(societyEvents.societyId, societies.id))
+        .where(eq(societyEvents.id, id))
+        .limit(1);
+
+      if (!result.length) {
+        logger.warn({
+          controller,
+          event: "event_not_found",
+          requestId,
+          metadata: {
+            eventId: id,
+          },
+        });
+
+        return res.status(404).json({
+          message: "Event not found.",
+        });
+      }
+
+      logger.info({
+        controller,
+        event: "get_event_details_success",
+        requestId,
+        metadata: {
+          eventId: id,
+        },
+      });
+
+      return res.status(200).json(result[0]);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "get_event_details_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
+
   async joinSociety(req: Request, res: Response, next: NextFunction) {
     const controller = "joinSociety";
     const requestId = req.id;
@@ -430,6 +532,129 @@ class StudentController {
       return next(error);
     }
   }
+
+  async leaveSociety(req: Request, res: Response, next: NextFunction) {
+    const controller = "leaveSociety";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "leave_society_initiated",
+        requestId,
+      });
+
+      const { id } = req.params;
+
+      if (!id || !uuidErrorHandler(id)) {
+        logger.warn({
+          controller,
+          event: "invalid_society_id",
+          requestId,
+          metadata: {
+            societyId: id,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid society id provided.",
+        });
+      }
+
+      const userId = req.body.user.id;
+
+      const society = await db
+        .select({
+          id: societies.id,
+          title: societies.title,
+          status: societies.status,
+        })
+        .from(societies)
+        .where(eq(societies.id, id))
+        .limit(1);
+
+      if (!society.length) {
+        logger.warn({
+          controller,
+          event: "society_not_found",
+          requestId,
+          metadata: {
+            societyId: id,
+          },
+        });
+
+        return res.status(404).json({
+          message: "Society not found.",
+        });
+      }
+
+      const existingMember = await db
+        .select({
+          id: societyMembers.id,
+          role: societyMembers.role,
+          status: societyMembers.status,
+        })
+        .from(societyMembers)
+        .where(
+          and(
+            eq(societyMembers.societyId, id),
+            eq(societyMembers.userId, userId),
+          ),
+        )
+        .limit(1);
+
+      if (!existingMember.length) {
+        logger.warn({
+          controller,
+          event: "membership_not_found",
+          requestId,
+          metadata: {
+            societyId: id,
+            userId,
+          },
+        });
+
+        return res.status(404).json({
+          message: "You are not a member of this society.",
+        });
+      }
+
+      await db
+        .delete(societyMembers)
+        .where(eq(societyMembers.id, existingMember[0].id));
+
+      logger.info({
+        controller,
+        event: "leave_society_success",
+        requestId,
+        metadata: {
+          societyId: id,
+          userId,
+          membershipId: existingMember[0].id,
+        },
+      });
+
+      return res.status(200).json({
+        message: "Successfully left the society.",
+      });
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "leave_society_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
+
+  async studentDetails(req: Request, res: Response, next: NextFunction) {}
+  async joinedSocieties(req: Request, res: Response, next: NextFunction) {}
+  async savedPosts(req: Request, res: Response, next: NextFunction) {}
+  async savedEvents(req: Request, res: Response, next: NextFunction) {}
 }
 
 export const studentController = new StudentController();

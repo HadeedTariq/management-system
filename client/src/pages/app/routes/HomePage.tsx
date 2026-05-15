@@ -101,7 +101,8 @@ export default function CiviConnectHomepage() {
                   const isActive = soc.status.toLowerCase() === "active";
 
                   return (
-                    <div
+                    <Link
+                      to={`/societies/${soc.id}`}
                       key={soc.id}
                       className="flex items-center gap-3 p-2.5 bg-[#F5F3EE] darks:bg-[#141210] rounded-lg"
                     >
@@ -139,7 +140,7 @@ export default function CiviConnectHomepage() {
                       >
                         {soc.status}
                       </span>
-                    </div>
+                    </Link>
                   );
                 })}
             </div>

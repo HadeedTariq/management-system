@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   ArrowRight,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // --- Animation Variants ---
 const fadeUp = {
@@ -188,10 +189,12 @@ export default function AboutUs() {
             Join hundreds of modern communities streamlining their operations
             and enhancing resident satisfaction.
           </p>
-          <button className="relative z-10 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white text-indigo-600 font-semibold hover:bg-slate-50 transition-colors active:scale-95">
-            Request a Demo
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <Link to={"/societies"}>
+            <button className="relative z-10 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white text-indigo-600 font-semibold hover:bg-slate-50 transition-colors active:scale-95">
+              Explore Societies
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </Link>
         </motion.div>
       </section>
     </div>

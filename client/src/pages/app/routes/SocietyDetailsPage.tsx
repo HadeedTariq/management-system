@@ -1,11 +1,11 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   useGetSocietyDetails,
   useJoinSociety,
+  useLeaveSociety,
 } from "../hooks/student/useStudent";
 import ClientErrorComponent from "../components/ClientErrorComponent";
 import LoadingBar from "@/components/LoadingBar";
-import { useState } from "react";
 import {
   Calendar,
   Users,
@@ -31,45 +31,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-
-// ─── Types ──────────────────────────────────────────────────────────────────
-
-type SocietyDetailsResponse = {
-  id: string;
-  title: string;
-  description: string | null;
-  status: "active" | "inactive";
-  createdAt: Date;
-  updatedAt: Date;
-  members: {
-    id: string;
-    role: "member" | "admin" | "society_head";
-    status: "active" | "left";
-    joinedAt: Date;
-    user: { userName: string | null };
-  }[];
-  posts: {
-    id: string;
-    title: string;
-    description: string | null;
-    image: string | null;
-    isPublished: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
-  events: {
-    id: string;
-    title: string;
-    description: string | null;
-    image: string | null;
-    location: string | null;
-    startTime: Date;
-    endTime: Date | null;
-    status: "upcoming" | "ongoing" | "completed" | "cancelled";
-    createdAt: Date;
-    updatedAt: Date;
-  }[];
-};
+import { useFullApp } from "@/store/hooks/useFullApp";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -198,12 +160,18 @@ const SocietyHeader = ({
   data: SocietyDetailsResponse;
   societyId: string;
 }) => {
-  const { mutate, isPending } = useJoinSociety(societyId);
+  const { user } = useFullApp();
+  const { mutate: joinSociety, isPending: isJoining } =
+    useJoinSociety(societyId);
+  const { mutate: leaveSociety, isPending: isLeaving } =
+    useLeaveSociety(societyId);
   const activeMembers = data.members.filter(
     (m) => m.status === "active",
   ).length;
   const head = data.members.find((m) => m.role === "society_head");
-
+  const userJoined = data.members.find(
+    (member) => member.user.userId === user?.id,
+  );
   return (
     <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* Decorative top band */}
@@ -226,15 +194,27 @@ const SocietyHeader = ({
                   {data.title}
                 </h1>
                 <SocietyStatusBadge status={data.status} />
-                <Button
-                  variant={"app"}
-                  onClick={() => {
-                    mutate();
-                  }}
-                  disabled={isPending}
-                >
-                  Join Society
-                </Button>
+                {!userJoined?.id ? (
+                  <Button
+                    variant={"app"}
+                    onClick={() => {
+                      joinSociety();
+                    }}
+                    disabled={isJoining}
+                  >
+                    Join Society
+                  </Button>
+                ) : (
+                  <Button
+                    variant={"destructive"}
+                    onClick={() => {
+                      leaveSociety();
+                    }}
+                    disabled={isLeaving}
+                  >
+                    Leave Society
+                  </Button>
+                )}
               </div>
 
               {data.description && (
@@ -476,7 +456,10 @@ const EventRow = ({
 }: {
   event: SocietyDetailsResponse["events"][0];
 }) => (
-  <div className="group flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+  <Link
+    to={`/events/${event.id}`}
+    className="group flex items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+  >
     {/* Image or decorative slab */}
     <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-indigo-50 to-violet-50">
       {event.image ? (
@@ -525,7 +508,7 @@ const EventRow = ({
         )}
       </div>
     </div>
-  </div>
+  </Link>
 );
 
 // ─── Empty State ──────────────────────────────────────────────────────────────

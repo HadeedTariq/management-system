@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 // --- Date Helper Functions ---
 const formatDateFull = (dateStr: Date | string) => {
   return new Intl.DateTimeFormat("en-US", {
@@ -92,7 +94,10 @@ const HomeEvents = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* Featured Event Card */}
-      <div className="lg:col-span-2 bg-white darks:bg-[#1E1C19] border border-[#1A1814]/10 darks:border-[#F2EFE8]/10 rounded-2xl p-8 transition-colors">
+      <Link
+        to={`/events/${featuredEvent.id}`}
+        className="lg:col-span-2 bg-white darks:bg-[#1E1C19] border border-[#1A1814]/10 darks:border-[#F2EFE8]/10 rounded-2xl p-8 transition-colors"
+      >
         <div className="flex flex-wrap items-center gap-2.5 mb-4">
           <span className="bg-[#EDEAE3] darks:bg-[#252320] rounded-md px-2.5 py-1 text-xs font-medium text-[#5C5748] darks:text-[#A8A298]">
             {formatDateFull(featuredEvent.startTime)}
@@ -107,16 +112,13 @@ const HomeEvents = ({
             </span>
           )}
         </div>
-
         <h3 className="font-['Playfair_Display',_serif] text-2xl font-bold text-[#1A1814] darks:text-[#F2EFE8] tracking-tight mb-2.5">
           {featuredEvent.title}
         </h3>
-
         <p className="text-sm text-[#5C5748] darks:text-[#A8A298] leading-relaxed font-light mb-5.5 line-clamp-3">
           {featuredEvent.description ||
             "Join us for this upcoming event. More details will be shared soon."}
         </p>
-
         {/* Keeping your static attendee avatars since attendee data isn't in the type */}
         <div className="flex items-center gap-2">
           <div className="flex">
@@ -151,12 +153,13 @@ const HomeEvents = ({
             ))}
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Side Events List */}
       <div className="flex flex-col gap-2.5">
         {sideEvents.map((ev: GetAllEventsResponse) => (
-          <div
+          <Link
+            to={`/events/${ev.id}`}
             key={ev.id}
             className="bg-white darks:bg-[#1E1C19] border border-[#1A1814]/10 darks:border-[#F2EFE8]/10 rounded-xl p-4 flex items-center gap-3.5 transition-colors hover:bg-[#F0EDE6] darks:hover:bg-[#2A2824] cursor-pointer"
           >
@@ -177,7 +180,7 @@ const HomeEvents = ({
                 {ev.society.title}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
 
         {/* Optional: Filler if there are less than 4 side events */}

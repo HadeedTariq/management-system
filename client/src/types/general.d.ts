@@ -111,3 +111,34 @@ type SocietyDetailsResponse = {
     updatedAt: Date;
   }[];
 };
+
+type SocietyEventDetails = {
+  id: string;
+
+  title: string;
+  description: string | null;
+
+  image: string | null;
+
+  location: string | null;
+
+  startTime: string;
+  endTime: string | null;
+
+  status: "upcoming" | "ongoing" | "completed" | "cancelled";
+
+  createdAt: string;
+  updatedAt: string;
+
+  society: {
+    id: string;
+
+    title: string;
+    description: string | null;
+
+    status: "active" | "inactive";
+
+    createdAt: string;
+    updatedAt: string;
+  };
+};

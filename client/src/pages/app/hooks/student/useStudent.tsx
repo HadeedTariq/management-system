@@ -60,6 +60,7 @@ export const useGetSocietyDetails = (id: string) => {
 };
 
 export const useJoinSociety = (societyId: string) => {
+  const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: ["join-society", societyId],
 
@@ -75,6 +76,9 @@ export const useJoinSociety = (societyId: string) => {
         description:
           data?.message || "You have successfully joined the society.",
       });
+      queryClient.invalidateQueries({
+        queryKey: [`get-society-details-${societyId}`],
+      });
     },
 
     onError: (error: ErrResponse) => {
@@ -86,6 +90,60 @@ export const useJoinSociety = (societyId: string) => {
         variant: "destructive",
       });
     },
+  });
+
+  return result;
+};
+export const useLeaveSociety = (societyId: string) => {
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: ["leave-society", societyId],
+
+    mutationFn: async () => {
+      const { data } = await studentApi.post(`/society/leave/${societyId}`);
+
+      return data;
+    },
+
+    onSuccess: (data: any) => {
+      toast({
+        title: "Society left",
+        description: data?.message || "You have successfully left the society.",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`get-society-details-${societyId}`],
+      });
+    },
+
+    onError: (error: ErrResponse) => {
+      toast({
+        title: "Failed to leave society",
+        description:
+          error.response?.data?.message ||
+          "Unable to leave the society right now. Please try again later.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  return result;
+};
+
+export const useGetEventDetails = (id: string) => {
+  const queryKey = [`get-event-details-${id}`];
+  const url = `/event/details/${id}`;
+
+  const result = useQuery({
+    queryKey: [queryKey],
+    queryFn: async () => {
+      const { data } = await studentApi.get(url);
+      return data as SocietyEventDetails;
+    },
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
   });
 
   return result;

@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, Clock, ArrowRight, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Type definition matching your API response
 type PlatformEvent = {
@@ -122,9 +123,11 @@ const HeroEventCard = ({ event }: { event: PlatformEvent }) => (
           </div>
         </div>
         <div className="mt-8">
-          <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm h-11 px-6">
-            View Details <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          <Link to={`/events/${event.id}`}>
+            <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm h-11 px-6">
+              View Details <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
@@ -174,12 +177,14 @@ const GridEventCard = ({ event }: { event: PlatformEvent }) => (
       </div>
     </CardContent>
     <CardFooter className="pt-0 pb-4 border-t border-slate-100 mt-auto">
-      <Button
-        variant="ghost"
-        className="w-full justify-start text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 px-3 h-10 font-medium"
-      >
-        View Details <ArrowRight className="ml-2 h-3.5 w-3.5" />
-      </Button>
+      <Link to={`/events/${event.id}`}>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 px-3 h-10 font-medium"
+        >
+          View Details <ArrowRight className="ml-2 h-3.5 w-3.5" />
+        </Button>
+      </Link>
     </CardFooter>
   </Card>
 );

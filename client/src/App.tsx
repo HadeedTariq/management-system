@@ -35,6 +35,11 @@ import AllEvents from "./pages/app/routes/society-head/AllEvents";
 import AllClientSideSocieties from "./pages/app/routes/AllClientSideSocieties";
 import AllClientSideEvents from "./pages/app/routes/AllClientSideEvents";
 import SocietyDetailsPage from "./pages/app/routes/SocietyDetailsPage";
+import EventsDetailsPage from "./pages/app/routes/EventsDetailsPage";
+import FeaturesPage from "./pages/app/routes/FeaturesPage";
+import PortalSidebar from "./pages/app/components/portal/PortalSidebar";
+import MyProfile from "./pages/app/routes/portal/MyProfile";
+import JoinedSocieties from "./pages/app/routes/portal/JoinedSocieties";
 
 function App() {
   const { user } = useFullApp();
@@ -54,9 +59,11 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="about-us" element={<AboutUs />} />
+        <Route path="features" element={<FeaturesPage />} />
         <Route path="societies" element={<AllClientSideSocieties />} />
         <Route path="societies/:id" element={<SocietyDetailsPage />} />
         <Route path="events" element={<AllClientSideEvents />} />
+        <Route path="events/:id" element={<EventsDetailsPage />} />
       </Route>
 
       <Route
@@ -70,6 +77,11 @@ function App() {
         <Route index element={<Authenticate />} />
         <Route path="forgot-password" element={<ForgetPassword />} />
         <Route path="reset-password" element={<ResetPassword />} />
+      </Route>
+
+      <Route path="/portal" element={<PortalSidebar />}>
+        <Route index element={<MyProfile />} />
+        <Route path="joined-societies" element={<JoinedSocieties />} />
       </Route>
 
       <Route
