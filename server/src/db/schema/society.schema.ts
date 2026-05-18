@@ -124,3 +124,50 @@ export const societyEvents = pgTable("society_events", {
     .$onUpdate(() => new Date())
     .notNull(),
 });
+
+// saved scoiety event and the post schema
+export const savedSocietyPosts = pgTable(
+  "saved_society_posts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    postId: uuid("post_id")
+      .notNull()
+      .references(() => societyPosts.id, { onDelete: "cascade" }),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueSavedPost: uniqueIndex("unique_saved_post_idx").on(
+      table.userId,
+      table.postId,
+    ),
+  }),
+);
+
+export const savedSocietyEvents = pgTable(
+  "saved_society_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    eventId: uuid("event_id")
+      .notNull()
+      .references(() => societyEvents.id, { onDelete: "cascade" }),
+
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    uniqueSavedEvent: uniqueIndex("unique_saved_event_idx").on(
+      table.userId,
+      table.eventId,
+    ),
+  }),
+);

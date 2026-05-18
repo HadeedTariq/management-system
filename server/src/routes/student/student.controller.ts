@@ -6,6 +6,8 @@ import { logger } from "@/common/middleware/requestLogger";
 import { db } from "@/db/client";
 import {
   emailOtps,
+  savedSocietyEvents,
+  savedSocietyPosts,
   societies,
   societyEvents,
   societyMembers,
@@ -142,6 +144,8 @@ class StudentController {
   async getSocietyDetails(req: Request, res: Response, next: NextFunction) {
     const controller = "getSocietyDetails";
     const requestId = req.id;
+
+    const { user } = req.body;
 
     try {
       logger.info({
@@ -651,8 +655,313 @@ class StudentController {
     }
   }
 
+  async savePost(req: Request, res: Response, next: NextFunction) {
+    const controller = "savePost";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "save_post_initiated",
+        requestId,
+      });
+
+      const { user } = req.body;
+
+      const userId = user?.id;
+      const { postId } = req.params;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: {
+            userId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid user id",
+        });
+      }
+
+      if (!postId || !uuidErrorHandler(postId)) {
+        logger.warn({
+          controller,
+          event: "invalid_post_id",
+          requestId,
+          metadata: {
+            postId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid post id",
+        });
+      }
+
+      const existingSavedPost = await db
+        .select({
+          id: savedSocietyPosts.id,
+        })
+        .from(savedSocietyPosts)
+        .where(
+          and(
+            eq(savedSocietyPosts.userId, userId),
+            eq(savedSocietyPosts.postId, postId),
+          ),
+        )
+        .limit(1);
+
+      if (existingSavedPost.length > 0) {
+        await db
+          .delete(savedSocietyPosts)
+          .where(eq(savedSocietyPosts.id, existingSavedPost[0].id));
+
+        logger.info({
+          controller,
+          event: "post_unsaved_success",
+          requestId,
+          metadata: {
+            userId,
+            postId,
+          },
+        });
+
+        return res.status(200).json({
+          saved: false,
+          message: "Post removed from saved list",
+        });
+      }
+
+      await db.insert(savedSocietyPosts).values({
+        userId,
+        postId,
+      });
+
+      logger.info({
+        controller,
+        event: "post_saved_success",
+        requestId,
+        metadata: {
+          userId,
+          postId,
+        },
+      });
+
+      return res.status(200).json({
+        saved: true,
+        message: "Post saved successfully",
+      });
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "save_post_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
+
+  async saveEvent(req: Request, res: Response, next: NextFunction) {
+    const controller = "saveEvent";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "save_event_initiated",
+        requestId,
+      });
+
+      const { user } = req.body;
+
+      const userId = user?.id;
+      const { eventId } = req.params;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: {
+            userId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid user id",
+        });
+      }
+
+      if (!eventId || !uuidErrorHandler(eventId)) {
+        logger.warn({
+          controller,
+          event: "invalid_event_id",
+          requestId,
+          metadata: {
+            eventId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid event id",
+        });
+      }
+
+      const existingSavedEvent = await db
+        .select({
+          id: savedSocietyEvents.id,
+        })
+        .from(savedSocietyEvents)
+        .where(
+          and(
+            eq(savedSocietyEvents.userId, userId),
+            eq(savedSocietyEvents.eventId, eventId),
+          ),
+        )
+        .limit(1);
+
+      if (existingSavedEvent.length > 0) {
+        await db
+          .delete(savedSocietyEvents)
+          .where(eq(savedSocietyEvents.id, existingSavedEvent[0].id));
+
+        logger.info({
+          controller,
+          event: "event_unsaved_success",
+          requestId,
+          metadata: {
+            userId,
+            eventId,
+          },
+        });
+
+        return res.status(200).json({
+          saved: false,
+          message: "Event removed from saved list",
+        });
+      }
+
+      await db.insert(savedSocietyEvents).values({
+        userId,
+        eventId,
+      });
+
+      logger.info({
+        controller,
+        event: "event_saved_success",
+        requestId,
+        metadata: {
+          userId,
+          eventId,
+        },
+      });
+
+      return res.status(200).json({
+        saved: true,
+        message: "Event saved successfully",
+      });
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "save_event_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
+
   async studentDetails(req: Request, res: Response, next: NextFunction) {}
-  async joinedSocieties(req: Request, res: Response, next: NextFunction) {}
+
+  async joinedSocieties(req: Request, res: Response, next: NextFunction) {
+    const controller = "joinedSocieties";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "joined_societies_initiated",
+        requestId,
+      });
+
+      const { user } = req.body;
+
+      const userId = user?.id;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: {
+            userId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid user id",
+        });
+      }
+
+      const result = await db
+        .select({
+          membershipId: societyMembers.id,
+
+          role: societyMembers.role,
+          memberStatus: societyMembers.status,
+          joinedAt: societyMembers.joinedAt,
+
+          society: {
+            id: societies.id,
+
+            title: societies.title,
+            description: societies.description,
+
+            status: societies.status,
+
+            createdAt: societies.createdAt,
+            updatedAt: societies.updatedAt,
+          },
+        })
+        .from(societyMembers)
+        .innerJoin(societies, eq(societyMembers.societyId, societies.id))
+        .where(eq(societyMembers.userId, userId))
+        .orderBy(desc(societyMembers.joinedAt));
+
+      logger.info({
+        controller,
+        event: "joined_societies_success",
+        requestId,
+        metadata: {
+          count: result.length,
+        },
+      });
+
+      return res.status(200).json(result);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "joined_societies_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
+
   async savedPosts(req: Request, res: Response, next: NextFunction) {}
   async savedEvents(req: Request, res: Response, next: NextFunction) {}
 }

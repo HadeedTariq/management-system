@@ -148,3 +148,108 @@ export const useGetEventDetails = (id: string) => {
 
   return result;
 };
+
+export const useGetJoinedSocieties = () => {
+  const queryKey = [`get-joined-societies`];
+  const url = `/portal/joined-societies`;
+
+  const result = useQuery({
+    queryKey: [queryKey],
+    queryFn: async () => {
+      const { data } = await studentApi.get(url);
+      return data as JoinedSociety[];
+    },
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
+  });
+
+  return result;
+};
+
+export const useSavePost = (postId: string) => {
+  const queryClient = useQueryClient();
+
+  const result = useMutation({
+    mutationKey: ["save-post", postId],
+
+    mutationFn: async () => {
+      const { data } = await studentApi.post(`/post/save/${postId}`);
+
+      return data;
+    },
+
+    onSuccess: (data: any) => {
+      toast({
+        title: data?.saved ? "Post saved" : "Post unsaved",
+        description:
+          data?.message ||
+          (data?.saved
+            ? "Post added to your saved list."
+            : "Post removed from your saved list."),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["saved-posts"],
+      });
+    },
+
+    onError: (error: ErrResponse) => {
+      toast({
+        title: "Failed to save post",
+        description:
+          error.response?.data?.message ||
+          "Unable to update saved post right now. Please try again later.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  return result;
+};
+
+export const useSaveEvent = (eventId: string) => {
+  const queryClient = useQueryClient();
+
+  const result = useMutation({
+    mutationKey: ["save-event", eventId],
+
+    mutationFn: async () => {
+      const { data } = await studentApi.post(`/event/save/${eventId}`);
+
+      return data;
+    },
+
+    onSuccess: (data: any) => {
+      toast({
+        title: data?.saved ? "Event saved" : "Event unsaved",
+        description:
+          data?.message ||
+          (data?.saved
+            ? "Event added to your saved list."
+            : "Event removed from your saved list."),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [`get-society-event-details-${eventId}`],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["saved-events"],
+      });
+    },
+
+    onError: (error: ErrResponse) => {
+      toast({
+        title: "Failed to save event",
+        description:
+          error.response?.data?.message ||
+          "Unable to update saved event right now. Please try again later.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  return result;
+};

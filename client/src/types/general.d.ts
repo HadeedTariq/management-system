@@ -142,3 +142,24 @@ type SocietyEventDetails = {
     updatedAt: string;
   };
 };
+
+type JoinedSociety = {
+  membershipId: string;
+
+  role: "member" | "admin" | "moderator";
+  memberStatus: "active" | "inactive" | "banned";
+
+  joinedAt: string;
+
+  society: {
+    id: string;
+
+    title: string;
+    description: string | null;
+
+    status: "active" | "inactive";
+
+    createdAt: string;
+    updatedAt: string;
+  };
+};

@@ -23,6 +23,8 @@ router.get(
 router.use(checkAuth);
 router.post("/society/join/:id", asyncHandler(studentController.joinSociety));
 router.post("/society/leave/:id", asyncHandler(studentController.leaveSociety));
+router.post("/post/save/:postId", asyncHandler(studentController.savePost));
+router.post("/event/save/:eventId", asyncHandler(studentController.saveEvent));
 router.get(
   "/portal/my-details",
   asyncHandler(studentController.studentDetails),
