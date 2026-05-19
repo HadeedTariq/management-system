@@ -3,7 +3,7 @@ import { studentApi } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetAllPlatformSocieities = () => {
-  const queryKey = ["get-all-platform-societies"];
+  const queryKey = "get-all-platform-societies";
   const url = `/get-all-societies`;
 
   const result = useQuery({
@@ -22,7 +22,7 @@ export const useGetAllPlatformSocieities = () => {
 };
 
 export const useGetAllPlatformEvents = () => {
-  const queryKey = ["get-all-platform-events"];
+  const queryKey = "get-all-platform-events";
   const url = `/get-all-events`;
 
   const result = useQuery({
@@ -41,7 +41,7 @@ export const useGetAllPlatformEvents = () => {
 };
 
 export const useGetSocietyDetails = (id: string) => {
-  const queryKey = [`get-society-details-${id}`];
+  const queryKey = `get-society-details-${id}`;
   const url = `/society/details/${id}`;
 
   const result = useQuery({
@@ -131,7 +131,7 @@ export const useLeaveSociety = (societyId: string) => {
 };
 
 export const useGetEventDetails = (id: string) => {
-  const queryKey = [`get-event-details-${id}`];
+  const queryKey = `get-event-details-${id}`;
   const url = `/event/details/${id}`;
 
   const result = useQuery({
@@ -150,7 +150,7 @@ export const useGetEventDetails = (id: string) => {
 };
 
 export const useGetJoinedSocieties = () => {
-  const queryKey = [`get-joined-societies`];
+  const queryKey = `get-joined-societies`;
   const url = `/portal/joined-societies`;
 
   const result = useQuery({
@@ -168,7 +168,7 @@ export const useGetJoinedSocieties = () => {
   return result;
 };
 
-export const useSavePost = (postId: string) => {
+export const useSavePost = (postId: string, societyId: string) => {
   const queryClient = useQueryClient();
 
   const result = useMutation({
@@ -191,7 +191,10 @@ export const useSavePost = (postId: string) => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["saved-posts"],
+        queryKey: [`get-society-details-${societyId}`],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [`get-saved-posts`],
       });
     },
 
@@ -209,7 +212,7 @@ export const useSavePost = (postId: string) => {
   return result;
 };
 
-export const useSaveEvent = (eventId: string) => {
+export const useSaveEvent = (eventId: string, societyId: string) => {
   const queryClient = useQueryClient();
 
   const result = useMutation({
@@ -232,11 +235,10 @@ export const useSaveEvent = (eventId: string) => {
       });
 
       queryClient.invalidateQueries({
-        queryKey: [`get-society-event-details-${eventId}`],
+        queryKey: [`get-society-details-${societyId}`],
       });
-
       queryClient.invalidateQueries({
-        queryKey: ["saved-events"],
+        queryKey: ["get-saved-events"],
       });
     },
 
@@ -249,6 +251,72 @@ export const useSaveEvent = (eventId: string) => {
         variant: "destructive",
       });
     },
+  });
+
+  return result;
+};
+
+export const useGetSavedPosts = () => {
+  const queryKey = "get-saved-posts";
+  const url = `/portal/saved-posts`;
+
+  const result = useQuery({
+    queryKey: [queryKey],
+
+    queryFn: async () => {
+      const { data } = await studentApi.get(url);
+
+      return data as SavedPost[];
+    },
+
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
+  });
+
+  return result;
+};
+
+export const useGetSavedEvents = () => {
+  const queryKey = "get-saved-events";
+  const url = `/portal/saved-events`;
+
+  const result = useQuery({
+    queryKey: [queryKey],
+
+    queryFn: async () => {
+      const { data } = await studentApi.get(url);
+
+      return data as SavedEvent[];
+    },
+
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
+  });
+
+  return result;
+};
+
+export const useGetMyDetails = () => {
+  const queryKey = "get-my-details";
+  const url = `/portal/my-details`;
+
+  const result = useQuery({
+    queryKey: [queryKey],
+
+    queryFn: async () => {
+      const { data } = await studentApi.get(url);
+
+      return data as StudentDetailsResponse;
+    },
+
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
   });
 
   return result;

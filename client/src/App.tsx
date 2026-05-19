@@ -40,6 +40,8 @@ import FeaturesPage from "./pages/app/routes/FeaturesPage";
 import PortalSidebar from "./pages/app/components/portal/PortalSidebar";
 import MyProfile from "./pages/app/routes/portal/MyProfile";
 import JoinedSocieties from "./pages/app/routes/portal/JoinedSocieties";
+import SavedPosts from "./pages/app/routes/portal/SavedPosts";
+import SavedEvents from "./pages/app/routes/portal/SavedEvents";
 
 function App() {
   const { user } = useFullApp();
@@ -82,6 +84,8 @@ function App() {
       <Route path="/portal" element={<PortalSidebar />}>
         <Route index element={<MyProfile />} />
         <Route path="joined-societies" element={<JoinedSocieties />} />
+        <Route path="saved-posts" element={<SavedPosts />} />
+        <Route path="saved-events" element={<SavedEvents />} />
       </Route>
 
       <Route

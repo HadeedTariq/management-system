@@ -358,7 +358,13 @@ const MembersPanel = ({
 
 // ─── Posts Tab ────────────────────────────────────────────────────────────────
 
-const PostsTab = ({ posts }: { posts: SocietyDetailsResponse["posts"] }) => {
+const PostsTab = ({
+  posts,
+  societyId,
+}: {
+  posts: SocietyDetailsResponse["posts"];
+  societyId: string;
+}) => {
   if (posts.length === 0)
     return (
       <EmptyState
@@ -371,14 +377,20 @@ const PostsTab = ({ posts }: { posts: SocietyDetailsResponse["posts"] }) => {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} societyId={societyId} />
       ))}
     </div>
   );
 };
 
-const PostCard = ({ post }: { post: SocietyDetailsResponse["posts"][0] }) => {
-  const { mutate, isPending } = useSavePost(post.id);
+const PostCard = ({
+  post,
+  societyId,
+}: {
+  post: SocietyDetailsResponse["posts"][0];
+  societyId: string;
+}) => {
+  const { mutate, isPending } = useSavePost(post.id, societyId);
 
   return (
     <Card className="group flex h-full flex-col overflow-hidden border-slate-200 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/5">
@@ -440,21 +452,27 @@ const PostCard = ({ post }: { post: SocietyDetailsResponse["posts"][0] }) => {
               </div>
 
               <Button
-                variant="secondary"
+                variant={post.isSaved ? "outline" : "secondary"}
                 size="sm"
                 onClick={() => mutate()}
                 disabled={isPending}
-                className="h-8 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800"
+                className={`h-8 transition-all duration-200 ${
+                  post.isSaved
+                    ? "border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
+                }`}
               >
                 {isPending ? (
                   <>
                     <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    Saving
+                    {post.isSaved ? "Removing..." : "Saving..."}
                   </>
                 ) : (
                   <>
-                    <Bookmark className="mr-1.5 h-3.5 w-3.5" />
-                    Save Post
+                    <Bookmark
+                      className={`mr-1.5 h-3.5 w-3.5 ${post.isSaved ? "fill-indigo-600" : ""}`}
+                    />
+                    {post.isSaved ? "Saved" : "Save Post"}
                   </>
                 )}
               </Button>
@@ -470,8 +488,10 @@ const PostCard = ({ post }: { post: SocietyDetailsResponse["posts"][0] }) => {
 
 const EventsTab = ({
   events,
+  societyId,
 }: {
   events: SocietyDetailsResponse["events"];
+  societyId: string;
 }) => {
   if (events.length === 0)
     return (
@@ -488,7 +508,7 @@ const EventsTab = ({
   return (
     <div className="flex flex-col gap-3">
       {sorted.map((event) => (
-        <EventRow key={event.id} event={event} />
+        <EventRow key={event.id} event={event} societyId={societyId} />
       ))}
     </div>
   );
@@ -496,10 +516,12 @@ const EventsTab = ({
 
 const EventRow = ({
   event,
+  societyId,
 }: {
   event: SocietyDetailsResponse["events"][0];
+  societyId: string;
 }) => {
-  const { mutate, isPending } = useSaveEvent(event.id);
+  const { mutate, isPending } = useSaveEvent(event.id, societyId);
 
   return (
     <Link
@@ -566,25 +588,34 @@ const EventRow = ({
       {/* Action Block */}
       <div className="sm:pl-4">
         <Button
-          variant="secondary"
+          variant={event.isSaved ? "outline" : "secondary"}
           size="sm"
-          disabled={isPending}
           onClick={(e) => {
-            // Prevent navigating to the event details page when clicking "Save"
+            // Stop the link from being triggered
             e.preventDefault();
+            // Stop the event from bubbling up to the card wrapper
+            e.stopPropagation();
+
             mutate();
           }}
-          className="h-9 w-full sm:w-auto px-4 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 font-medium transition-colors"
+          disabled={isPending}
+          className={`h-8 transition-all duration-200 ${
+            event.isSaved
+              ? "border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
+          }`}
         >
           {isPending ? (
             <>
-              <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-              Saving
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+              {event.isSaved ? "Removing..." : "Saving..."}
             </>
           ) : (
             <>
-              <Bookmark className="mr-2 h-3.5 w-3.5" />
-              Save Event
+              <Bookmark
+                className={`mr-1.5 h-3.5 w-3.5 ${event.isSaved ? "fill-indigo-600" : ""}`}
+              />
+              {event.isSaved ? "Saved" : "Save Event"}
             </>
           )}
         </Button>
@@ -687,11 +718,11 @@ const SocietyDetailsPage = () => {
               </TabsList>
 
               <TabsContent value="posts">
-                <PostsTab posts={data.posts} />
+                <PostsTab posts={data.posts} societyId={id as string} />
               </TabsContent>
 
               <TabsContent value="events">
-                <EventsTab events={data.events} />
+                <EventsTab events={data.events} societyId={id as string} />
               </TabsContent>
             </Tabs>
           </div>

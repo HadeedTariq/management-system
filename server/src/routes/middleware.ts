@@ -82,16 +82,28 @@ export function banChecker(req: Request, res: Response, next: NextFunction) {
 
 export function authParser(req: Request, res: Response, next: NextFunction) {
   try {
-    const { accessToken } = req.cookies;
+    let token: string | undefined;
 
-    if (!accessToken) {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    } else if (req.cookies?.accessToken) {
+      token = req.cookies.accessToken;
+    }
+
+    if (!token) {
       return next();
     }
 
-    const decoded = jwt.verify(accessToken, env.JWT_ACCESS_TOKEN_SECRET);
+    const decoded = jwt.verify(token, env.JWT_ACCESS_TOKEN_SECRET);
 
     if (!decoded) {
       return next();
+    }
+
+    if (req.body === undefined) {
+      req.body = {};
     }
 
     req.body.user = decoded;

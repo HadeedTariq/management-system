@@ -20,8 +20,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import { useFullApp } from "@/store/hooks/useFullApp";
-// import { useAdminState } from "@/store/hooks/useAdminState";
-// import AdminPasswordDialog from "./AdminPasswordDialog";
 const sidebarItems = [
   {
     title: "My Profile",

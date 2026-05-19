@@ -87,6 +87,7 @@ type SocietyDetailsResponse = {
     image: string | null;
 
     isPublished: boolean;
+    isSaved: boolean;
 
     createdAt: Date;
     updatedAt: Date;
@@ -101,6 +102,7 @@ type SocietyDetailsResponse = {
     image: string | null;
 
     location: string | null;
+    isSaved: boolean;
 
     startTime: Date;
     endTime: Date | null;
@@ -162,4 +164,175 @@ type JoinedSociety = {
     createdAt: string;
     updatedAt: string;
   };
+};
+
+type SavedPost = {
+  savedId: string;
+
+  savedAt: string;
+
+  post: {
+    id: string;
+
+    title: string;
+    description: string | null;
+
+    image: string | null;
+
+    isPublished: boolean;
+
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  society: {
+    id: string;
+
+    title: string;
+    description: string | null;
+
+    status: "active" | "inactive";
+  };
+
+  author: {
+    id: string;
+
+    userName: string | null;
+    email: string | null;
+  };
+};
+
+type SavedEvent = {
+  savedId: string;
+
+  savedAt: string;
+
+  event: {
+    id: string;
+
+    title: string;
+    description: string | null;
+
+    image: string | null;
+
+    location: string | null;
+
+    startTime: string;
+    endTime: string | null;
+
+    status: "upcoming" | "ongoing" | "completed" | "cancelled";
+
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  society: {
+    id: string;
+
+    title: string;
+    description: string | null;
+
+    status: "active" | "inactive";
+  };
+
+  author: {
+    id: string;
+
+    userName: string | null;
+    email: string | null;
+  };
+};
+type StudentDetailsResponse = {
+  student: {
+    id: string;
+
+    userName: string | null;
+    email: string | null;
+
+    role: "student" | "admin";
+    source: "general" | "google";
+
+    gender: "male" | "female" | "other" | null;
+
+    createdAt: string;
+  };
+
+  analytics: {
+    joinedSocieties: number;
+    savedPosts: number;
+    savedEvents: number;
+  };
+
+  joinedSocieties: {
+    membershipId: string;
+
+    role: "member" | "admin" | "society_head";
+    status: "active" | "left";
+
+    joinedAt: string;
+
+    society: {
+      id: string;
+
+      title: string;
+      description: string | null;
+
+      status: "active" | "inactive";
+
+      createdAt: string;
+    };
+  }[];
+
+  savedPosts: {
+    savedId: string;
+
+    savedAt: string;
+
+    post: {
+      id: string;
+
+      title: string;
+      description: string | null;
+
+      image: string | null;
+
+      isPublished: boolean;
+
+      createdAt: string;
+    };
+
+    society: {
+      id: string;
+      title: string;
+    };
+  }[];
+
+  savedEvents: {
+    savedId: string;
+
+    savedAt: string;
+
+    event: {
+      id: string;
+
+      title: string;
+      description: string | null;
+
+      image: string | null;
+
+      location: string | null;
+
+      startTime: string;
+      endTime: string | null;
+
+      status: "upcoming" | "ongoing" | "completed" | "cancelled";
+
+      createdAt: string;
+    };
+
+    society: {
+      id: string;
+      title: string;
+    };
+  }[];
 };

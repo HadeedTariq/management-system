@@ -145,7 +145,9 @@ class StudentController {
     const controller = "getSocietyDetails";
     const requestId = req.id;
 
-    const { user } = req.body;
+    const user = req?.body?.user;
+
+    console.log(user);
 
     try {
       logger.info({
@@ -223,6 +225,8 @@ class StudentController {
         .where(eq(societyMembers.societyId, id))
         .orderBy(desc(societyMembers.joinedAt));
 
+      const userId = user?.id;
+
       const posts = await db
         .select({
           id: societyPosts.id,
@@ -234,10 +238,24 @@ class StudentController {
 
           isPublished: societyPosts.isPublished,
 
+          isSaved: sql<boolean>`
+      CASE
+        WHEN ${savedSocietyPosts.id} IS NOT NULL THEN true
+        ELSE false
+      END
+    `,
+
           createdAt: societyPosts.createdAt,
           updatedAt: societyPosts.updatedAt,
         })
         .from(societyPosts)
+        .leftJoin(
+          savedSocietyPosts,
+          and(
+            eq(savedSocietyPosts.postId, societyPosts.id),
+            eq(savedSocietyPosts.userId, userId),
+          ),
+        )
         .where(
           and(
             eq(societyPosts.societyId, id),
@@ -262,10 +280,24 @@ class StudentController {
 
           status: societyEvents.status,
 
+          isSaved: sql<boolean>`
+      CASE
+        WHEN ${savedSocietyEvents.id} IS NOT NULL THEN true
+        ELSE false
+      END
+    `,
+
           createdAt: societyEvents.createdAt,
           updatedAt: societyEvents.updatedAt,
         })
         .from(societyEvents)
+        .leftJoin(
+          savedSocietyEvents,
+          and(
+            eq(savedSocietyEvents.eventId, societyEvents.id),
+            eq(savedSocietyEvents.userId, userId),
+          ),
+        )
         .where(eq(societyEvents.societyId, id))
         .orderBy(desc(societyEvents.createdAt));
 
@@ -881,7 +913,204 @@ class StudentController {
     }
   }
 
-  async studentDetails(req: Request, res: Response, next: NextFunction) {}
+  async studentDetails(req: Request, res: Response, next: NextFunction) {
+    const controller = "studentDetails";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "student_details_initiated",
+        requestId,
+      });
+
+      const { user } = req.body;
+
+      const userId = user?.id;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: {
+            userId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid user id",
+        });
+      }
+
+      const student = await db
+        .select({
+          id: users.id,
+
+          userName: users.userName,
+          email: users.email,
+
+          role: users.role,
+          source: users.source,
+
+          gender: users.gender,
+
+          createdAt: users.createdAt,
+        })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (student.length === 0) {
+        logger.warn({
+          controller,
+          event: "student_not_found",
+          requestId,
+          metadata: {
+            userId,
+          },
+        });
+
+        return res.status(404).json({
+          message: "Student not found",
+        });
+      }
+
+      const joinedSocieties = await db
+        .select({
+          membershipId: societyMembers.id,
+
+          role: societyMembers.role,
+          status: societyMembers.status,
+
+          joinedAt: societyMembers.joinedAt,
+
+          society: {
+            id: societies.id,
+
+            title: societies.title,
+            description: societies.description,
+
+            status: societies.status,
+
+            createdAt: societies.createdAt,
+          },
+        })
+        .from(societyMembers)
+        .innerJoin(societies, eq(societyMembers.societyId, societies.id))
+        .where(eq(societyMembers.userId, userId))
+        .orderBy(desc(societyMembers.joinedAt));
+
+      const savedPosts = await db
+        .select({
+          savedId: savedSocietyPosts.id,
+
+          savedAt: savedSocietyPosts.createdAt,
+
+          post: {
+            id: societyPosts.id,
+
+            title: societyPosts.title,
+            description: societyPosts.description,
+
+            image: societyPosts.image,
+
+            isPublished: societyPosts.isPublished,
+
+            createdAt: societyPosts.createdAt,
+          },
+
+          society: {
+            id: societies.id,
+
+            title: societies.title,
+          },
+        })
+        .from(savedSocietyPosts)
+        .innerJoin(societyPosts, eq(savedSocietyPosts.postId, societyPosts.id))
+        .innerJoin(societies, eq(societyPosts.societyId, societies.id))
+        .where(eq(savedSocietyPosts.userId, userId))
+        .orderBy(desc(savedSocietyPosts.createdAt));
+
+      const savedEvents = await db
+        .select({
+          savedId: savedSocietyEvents.id,
+
+          savedAt: savedSocietyEvents.createdAt,
+
+          event: {
+            id: societyEvents.id,
+
+            title: societyEvents.title,
+            description: societyEvents.description,
+
+            image: societyEvents.image,
+
+            location: societyEvents.location,
+
+            startTime: societyEvents.startTime,
+            endTime: societyEvents.endTime,
+
+            status: societyEvents.status,
+
+            createdAt: societyEvents.createdAt,
+          },
+
+          society: {
+            id: societies.id,
+
+            title: societies.title,
+          },
+        })
+        .from(savedSocietyEvents)
+        .innerJoin(
+          societyEvents,
+          eq(savedSocietyEvents.eventId, societyEvents.id),
+        )
+        .innerJoin(societies, eq(societyEvents.societyId, societies.id))
+        .where(eq(savedSocietyEvents.userId, userId))
+        .orderBy(desc(savedSocietyEvents.createdAt));
+
+      const response = {
+        student: student[0],
+
+        analytics: {
+          joinedSocieties: joinedSocieties.length,
+          savedPosts: savedPosts.length,
+          savedEvents: savedEvents.length,
+        },
+
+        joinedSocieties,
+        savedPosts,
+        savedEvents,
+      };
+
+      logger.info({
+        controller,
+        event: "student_details_success",
+        requestId,
+        metadata: {
+          userId,
+          joinedSocietiesCount: joinedSocieties.length,
+          savedPostsCount: savedPosts.length,
+          savedEventsCount: savedEvents.length,
+        },
+      });
+
+      return res.status(200).json(response);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "student_details_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
 
   async joinedSocieties(req: Request, res: Response, next: NextFunction) {
     const controller = "joinedSocieties";
@@ -962,8 +1191,207 @@ class StudentController {
     }
   }
 
-  async savedPosts(req: Request, res: Response, next: NextFunction) {}
-  async savedEvents(req: Request, res: Response, next: NextFunction) {}
+  async savedPosts(req: Request, res: Response, next: NextFunction) {
+    const controller = "savedPosts";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "saved_posts_initiated",
+        requestId,
+      });
+
+      const { user } = req.body;
+
+      const userId = user?.id;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: {
+            userId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid user id",
+        });
+      }
+
+      const result = await db
+        .select({
+          savedId: savedSocietyPosts.id,
+
+          savedAt: savedSocietyPosts.createdAt,
+
+          post: {
+            id: societyPosts.id,
+
+            title: societyPosts.title,
+            description: societyPosts.description,
+
+            image: societyPosts.image,
+
+            isPublished: societyPosts.isPublished,
+
+            createdAt: societyPosts.createdAt,
+            updatedAt: societyPosts.updatedAt,
+          },
+
+          society: {
+            id: societies.id,
+
+            title: societies.title,
+            description: societies.description,
+
+            status: societies.status,
+          },
+
+          author: {
+            id: users.id,
+
+            userName: users.userName,
+            email: users.email,
+          },
+        })
+        .from(savedSocietyPosts)
+        .innerJoin(societyPosts, eq(savedSocietyPosts.postId, societyPosts.id))
+        .innerJoin(societies, eq(societyPosts.societyId, societies.id))
+        .innerJoin(users, eq(societyPosts.authorId, users.id))
+        .where(eq(savedSocietyPosts.userId, userId))
+        .orderBy(desc(savedSocietyPosts.createdAt));
+
+      logger.info({
+        controller,
+        event: "saved_posts_success",
+        requestId,
+        metadata: {
+          count: result.length,
+        },
+      });
+
+      return res.status(200).json(result);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "saved_posts_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
+
+  async savedEvents(req: Request, res: Response, next: NextFunction) {
+    const controller = "savedEvents";
+    const requestId = req.id;
+
+    try {
+      logger.info({
+        controller,
+        event: "saved_events_initiated",
+        requestId,
+      });
+
+      const { user } = req.body;
+
+      const userId = user?.id;
+
+      if (!userId || !uuidErrorHandler(userId)) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: {
+            userId,
+          },
+        });
+
+        return res.status(400).json({
+          message: "Invalid user id",
+        });
+      }
+
+      const result = await db
+        .select({
+          savedId: savedSocietyEvents.id,
+
+          savedAt: savedSocietyEvents.createdAt,
+
+          event: {
+            id: societyEvents.id,
+
+            title: societyEvents.title,
+            description: societyEvents.description,
+
+            image: societyEvents.image,
+
+            location: societyEvents.location,
+
+            startTime: societyEvents.startTime,
+            endTime: societyEvents.endTime,
+
+            status: societyEvents.status,
+
+            createdAt: societyEvents.createdAt,
+            updatedAt: societyEvents.updatedAt,
+          },
+
+          society: {
+            id: societies.id,
+
+            title: societies.title,
+            description: societies.description,
+
+            status: societies.status,
+          },
+
+          author: {
+            id: users.id,
+
+            userName: users.userName,
+            email: users.email,
+          },
+        })
+        .from(savedSocietyEvents)
+        .innerJoin(
+          societyEvents,
+          eq(savedSocietyEvents.eventId, societyEvents.id),
+        )
+        .innerJoin(societies, eq(societyEvents.societyId, societies.id))
+        .innerJoin(users, eq(societyEvents.authorId, users.id))
+        .where(eq(savedSocietyEvents.userId, userId))
+        .orderBy(desc(savedSocietyEvents.createdAt));
+
+      logger.info({
+        controller,
+        event: "saved_events_success",
+        requestId,
+        metadata: {
+          count: result.length,
+        },
+      });
+
+      return res.status(200).json(result);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "saved_events_failed",
+        requestId,
+        metadata: {
+          error,
+        },
+      });
+
+      return next(error);
+    }
+  }
 }
 
 export const studentController = new StudentController();

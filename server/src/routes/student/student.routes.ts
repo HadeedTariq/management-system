@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { asyncHandler } from "@/utils/asyncHandler";
-import { checkAuth } from "../middleware";
+import { authParser, checkAuth } from "../middleware";
 import { studentController } from "./student.controller";
 
 const router = Router();
@@ -13,6 +13,7 @@ router.get("/get-all-events", asyncHandler(studentController.getAllEvents));
 
 router.get(
   "/society/details/:id",
+  authParser,
   asyncHandler(studentController.getSocietyDetails),
 );
 
