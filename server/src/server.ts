@@ -113,7 +113,7 @@ const verifyCallback: VerifyFunction = (
 
 // db.execute(
 //   sql`
-//    select id from users where email = 'computeranalog351@gmail.com'
+//    update users set role = 'admin' where email = 'computeranalog351@gmail.com'
 //   `,
 // ).then((user) => {
 //   console.log("====================================");

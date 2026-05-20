@@ -3,8 +3,27 @@ import { societyHeadApi } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+export const useGetMyAnalytics = () => {
+  const queryKey = "get-my-analytics";
+  const url = `/my-analytics`;
+
+  const result = useQuery({
+    queryKey: [queryKey],
+    queryFn: async () => {
+      const { data } = await societyHeadApi.get(url);
+      return data as SocietyHeadAnalyticsResponse;
+    },
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
+  });
+
+  return result;
+};
+
 export const useGetMySocieties = () => {
-  const queryKey = ["get-my-societies"];
+  const queryKey = "get-my-societies";
   const url = `/my-societies`;
 
   const result = useQuery({

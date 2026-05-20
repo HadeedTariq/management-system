@@ -28,7 +28,114 @@ class SocietyHeadController {
   constructor() {
     this.getMySocieties = this.getMySocieties.bind(this);
   }
+  async societyHeadAnalytics(req: Request, res: Response, next: NextFunction) {
+    const controller = "societyHeadAnalytics";
+    const requestId = req.id;
 
+    try {
+      logger.info({
+        controller,
+        event: "society_head_analytics_initiated",
+        requestId,
+      });
+
+      const userId = req.body.user?.id;
+
+      if (!userId) {
+        logger.warn({
+          controller,
+          event: "invalid_user_id",
+          requestId,
+          metadata: { userId },
+        });
+
+        return res.status(400).json({
+          message: "Invalid user id",
+        });
+      }
+
+      const [societiesHeadCount, totalPosts, totalEvents, topEvents] =
+        await Promise.all([
+          db
+            .select({
+              count: sql<number>`count(*)`,
+            })
+            .from(societyMembers)
+            .where(
+              and(
+                eq(societyMembers.userId, userId),
+                eq(societyMembers.role, "society_head"),
+                eq(societyMembers.status, "active"),
+              ),
+            ),
+
+          db
+            .select({
+              count: sql<number>`count(*)`,
+            })
+            .from(societyPosts)
+            .where(eq(societyPosts.authorId, userId)),
+
+          db
+            .select({
+              count: sql<number>`count(*)`,
+            })
+            .from(societyEvents)
+            .where(eq(societyEvents.authorId, userId)),
+
+          db
+            .select({
+              id: societyEvents.id,
+              title: societyEvents.title,
+              description: societyEvents.description,
+              image: societyEvents.image,
+              location: societyEvents.location,
+              status: societyEvents.status,
+              startTime: societyEvents.startTime,
+              endTime: societyEvents.endTime,
+              createdAt: societyEvents.createdAt,
+
+              society: {
+                id: societies.id,
+                title: societies.title,
+              },
+            })
+            .from(societyEvents)
+            .innerJoin(societies, eq(societyEvents.societyId, societies.id))
+            .where(eq(societyEvents.authorId, userId))
+            .orderBy(desc(societyEvents.createdAt))
+            .limit(3),
+        ]);
+
+      const analytics = {
+        societiesHeadCount: Number(societiesHeadCount[0]?.count) || 0,
+
+        totalPosts: Number(totalPosts[0]?.count) || 0,
+
+        totalEvents: Number(totalEvents[0]?.count) || 0,
+
+        topEvents,
+      };
+
+      logger.info({
+        controller,
+        event: "society_head_analytics_success",
+        requestId,
+        metadata: analytics,
+      });
+
+      return res.status(200).json(analytics);
+    } catch (error) {
+      logger.error({
+        controller,
+        event: "society_head_analytics_failed",
+        requestId,
+        metadata: { error },
+      });
+
+      return next(error);
+    }
+  }
   async getMySocieties(req: Request, res: Response, next: NextFunction) {
     const controller = "getMySocieties";
     const requestId = req.id;

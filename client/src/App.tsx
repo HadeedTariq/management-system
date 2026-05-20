@@ -42,6 +42,7 @@ import MyProfile from "./pages/app/routes/portal/MyProfile";
 import JoinedSocieties from "./pages/app/routes/portal/JoinedSocieties";
 import SavedPosts from "./pages/app/routes/portal/SavedPosts";
 import SavedEvents from "./pages/app/routes/portal/SavedEvents";
+import AdminAuthLayout from "./components/AdminAuthLayout";
 
 function App() {
   const { user } = useFullApp();
@@ -91,9 +92,9 @@ function App() {
       <Route
         path="/admin-dashboard"
         element={
-          // <AdminAuthLayout>
-          <AdminSidebar />
-          // </AdminAuthLayout>
+          <AdminAuthLayout>
+            <AdminSidebar />
+          </AdminAuthLayout>
         }
       >
         <Route index element={<ManageUsers />} />
@@ -105,14 +106,7 @@ function App() {
         </Route>
       </Route>
 
-      <Route
-        path="/society-head-dashboard"
-        element={
-          // <AdminAuthLayout>
-          <SocietyHeadDashboard />
-          // </AdminAuthLayout>
-        }
-      >
+      <Route path="/society-head-dashboard" element={<SocietyHeadDashboard />}>
         <Route index element={<SocietyHeadDashboardFrontPage />} />
         <Route path="my-societies" element={<SocietyHeadSocieties />} />
         <Route path="my-posts" element={<AllPosts />} />

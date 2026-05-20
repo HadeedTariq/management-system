@@ -7,10 +7,105 @@ import { db } from "@/db/client";
 import { createSocietySchema } from "./admin.validator";
 import { emailOtps, societies, societyMembers, users } from "@/db";
 import { and, desc, eq, sql } from "drizzle-orm";
+import { sign } from "jsonwebtoken";
+import { timingSafeEqual } from "crypto";
 
 class AdminController {
   constructor() {
     this.createSociety = this.createSociety.bind(this);
+    this.adminAuthHandler = this.adminAuthHandler.bind(this);
+  }
+
+  async adminAuthHandler(req: Request, res: Response, next: NextFunction) {
+    const controller = "adminAuthHandler";
+    const requestId = req.id;
+
+    logger.info({
+      controller,
+      event: "admin_auth_start",
+      requestId,
+      message: "Admin authentication attempt started.",
+      metadata: { route: req.body?.currentRoute },
+    });
+
+    try {
+      const { password, user } = req.body;
+
+      if (!password || !user?.id) {
+        logger.warn({
+          controller,
+          event: "admin_auth_missing_fields",
+          requestId,
+          message: "Missing required fields in request body.",
+          metadata: { body: req.body },
+        });
+
+        return res.status(400).json({
+          message: "Missing required fields.",
+        });
+      }
+
+      // timing-safe comparison to prevent brute-force or timing attacks
+      const input = Buffer.from(password);
+      const target = Buffer.from(env.ADMIN_PASSWORD);
+
+      const isMatch =
+        input.length === target.length && timingSafeEqual(input, target);
+
+      if (!isMatch) {
+        logger.warn({
+          controller,
+          event: "admin_auth_failed",
+          requestId,
+          message: "Invalid admin password provided.",
+          metadata: { userId: user.id },
+        });
+
+        return res.status(401).json({
+          message: "Unauthorized. Invalid password.",
+        });
+      }
+
+      const setupToken = sign({ id: user.id }, env.JWT_SETUP_TOKEN_SECRET, {
+        expiresIn: "25m",
+      });
+
+      logger.info({
+        controller,
+        event: "admin_auth_success",
+        requestId,
+        message: "Admin authenticated successfully.",
+        metadata: { userId: user.id },
+      });
+
+      return res
+        .cookie("setupToken", setupToken, {
+          httpOnly: true, // should be true for security
+          secure: true,
+          sameSite: "none",
+          maxAge: 5 * 60 * 1000,
+        })
+        .status(200)
+        .json({ message: "Admin authenticate" });
+    } catch (error: any) {
+      logger.error({
+        controller,
+        event: "admin_auth_error",
+        requestId,
+        message: "Unexpected error during admin authentication.",
+        metadata: { error: error.message },
+      });
+
+      return res.status(500).json({
+        message: "Internal server error. Please try again later.",
+      });
+    }
+  }
+
+  async adminHealthChecker(req: Request, res: Response, next: NextFunction) {
+    return res.status(200).json({
+      message: "Admin panel reachable.",
+    });
   }
 
   async createSociety(req: Request, res: Response, next: NextFunction) {

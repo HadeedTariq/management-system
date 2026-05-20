@@ -3,6 +3,25 @@ import { adminApi } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CreateSocietyInput } from "../../validators/admin/admin.validator";
 
+export const useGetAdminPanelReachable = () => {
+  const queryKey = "get-admin-panel-reachable";
+  const url = "/reach-able";
+
+  const result = useQuery({
+    queryKey: [queryKey],
+    queryFn: async () => {
+      const { data } = await adminApi.get(url);
+      return data;
+    },
+    refetchOnWindowFocus: false,
+    retry: 2,
+    refetchOnMount: true,
+    refetchInterval: 300000,
+  });
+
+  return result;
+};
+
 export const useGetAllSocieties = () => {
   const queryKey = ["get-admin-societies"];
   const url = `/society/all`;

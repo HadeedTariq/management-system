@@ -27,6 +27,32 @@ type GetAllSocietiesResponse = {
   memberCount: number;
 };
 
+type SocietyHeadAnalyticsResponse = {
+  societiesHeadCount: number;
+  totalPosts: number;
+  totalEvents: number;
+
+  topEvents: {
+    id: string;
+    title: string;
+    description: string | null;
+    image: string | null;
+    location: string | null;
+
+    status: "upcoming" | "ongoing" | "completed" | "cancelled";
+
+    startTime: Date;
+    endTime: Date | null;
+
+    createdAt: Date;
+
+    society: {
+      id: string;
+      title: string;
+    };
+  }[];
+};
+
 type GetAllEventsResponse = {
   id: string;
 

@@ -200,9 +200,6 @@ const MySocietyPosts = () => {
             Your announcement feed is currently empty. Create a new post to keep
             your society members informed.
           </p>
-          <Button className="mt-6 h-10 rounded-lg bg-indigo-600 px-6 font-medium text-white shadow-sm hover:bg-indigo-700 darks:bg-indigo-600 darks:hover:bg-indigo-500 transition-colors">
-            Create First Post
-          </Button>
         </div>
       )}
     </div>

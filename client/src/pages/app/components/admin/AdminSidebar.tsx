@@ -7,14 +7,10 @@ import {
   ShieldCheck,
   User,
   Layers,
-  CalendarDays,
-  UserCog,
-  Settings,
-  Megaphone,
   Building2,
 } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -22,8 +18,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import { useFullApp } from "@/store/hooks/useFullApp";
-// import { useAdminState } from "@/store/hooks/useAdminState";
-// import AdminPasswordDialog from "./AdminPasswordDialog";
+import { useAdminState } from "@/store/hooks/useAdminState";
+import AdminPasswordDialog from "./AdminPasswordDialog";
 
 const sidebarItems = [
   {
@@ -49,42 +45,6 @@ const sidebarItems = [
       },
     ],
   },
-
-  {
-    title: "Memberships",
-    icon: <UserCog className="h-5 w-5" />,
-    pathName: "/admin-dashboard/memberships",
-  },
-
-  {
-    title: "Event Management",
-    icon: <CalendarDays className="h-5 w-5" />,
-    pathName: undefined,
-    items: [
-      {
-        title: "All Events",
-        url: "/admin-dashboard/events",
-        icon: <CalendarDays className="h-4 w-4" />,
-      },
-      {
-        title: "Pending Approvals",
-        url: "/admin-dashboard/events/pending",
-        icon: <ShieldCheck className="h-4 w-4" />,
-      },
-    ],
-  },
-
-  {
-    title: "Announcements",
-    icon: <Megaphone className="h-5 w-5" />,
-    pathName: "/admin-dashboard/announcements",
-  },
-
-  {
-    title: "Settings",
-    icon: <Settings className="h-5 w-5" />,
-    pathName: "/admin-dashboard/settings",
-  },
 ];
 
 function AdminSidebar() {
@@ -94,7 +54,7 @@ function AdminSidebar() {
     {},
   );
 
-  //   const { adminAuthenticated } = useAdminState();
+  const { adminAuthenticated } = useAdminState();
 
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => ({
@@ -282,6 +242,7 @@ function AdminSidebar() {
         {/* Precision Canvas */}
         <main className="flex-1 p-6 lg:p-8 animate-in fade-in duration-500">
           <div className="max-w-7xl mx-auto space-y-6">
+            {!adminAuthenticated && <AdminPasswordDialog />}
             <Outlet />
           </div>
         </main>

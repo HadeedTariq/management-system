@@ -6,6 +6,10 @@ import { checkAuth } from "../middleware";
 const router = Router();
 
 router.use(checkAuth);
+router.get(
+  "/my-analytics",
+  asyncHandler(societyHeadController.societyHeadAnalytics),
+);
 router.get("/my-societies", asyncHandler(societyHeadController.getMySocieties));
 router.get("/my-posts", asyncHandler(societyHeadController.getMyPosts));
 router.get("/my-events", asyncHandler(societyHeadController.getMyEvents));

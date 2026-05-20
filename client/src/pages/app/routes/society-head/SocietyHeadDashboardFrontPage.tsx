@@ -9,6 +9,9 @@ import {
   Activity,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useGetMyAnalytics } from "../../hooks/society-head/useSocietyHead";
+import LoadingBar from "@/components/LoadingBar";
+import SocietyHeadErrorComponent from "../../components/society-head/SocietyHeadErrorComponent";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -38,19 +41,13 @@ interface ActivityItem {
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const stats: StatCard[] = [
-  { label: "My Societies", value: 3, icon: "🏛️" },
-  { label: "Events", value: 12, icon: "📅" },
-  { label: "Posts", value: 28, icon: "📝" },
-];
-
 const navCards: NavCard[] = [
   {
     title: "My Societies",
     description: "View and manage all your registered societies",
     icon: <Building2 className="h-5 w-5" />,
     to: "/society-head-dashboard/my-societies",
-    tag: "3 Active",
+    tag: "Active Societies",
     tagVariant: "indigo",
   },
   {
@@ -73,28 +70,74 @@ const navCards: NavCard[] = [
     subItems: [{ label: "All Posts", to: "/society-head-dashboard/my-posts" }],
   },
 ];
+const statusStyles: Record<
+  string,
+  { bg: string; text: string; border: string; label: string }
+> = {
+  upcoming: {
+    bg: "bg-indigo-50",
+    text: "text-indigo-600",
+    border: "border-indigo-100",
+    label: "Upcoming",
+  },
+  ongoing: {
+    bg: "bg-green-50",
+    text: "text-green-700",
+    border: "border-green-200",
+    label: "Ongoing",
+  },
+  completed: {
+    bg: "bg-gray-100",
+    text: "text-gray-500",
+    border: "border-gray-200",
+    label: "Completed",
+  },
+  cancelled: {
+    bg: "bg-red-50",
+    text: "text-red-500",
+    border: "border-red-100",
+    label: "Cancelled",
+  },
+};
 
-const recentActivity: ActivityItem[] = [
-  {
-    text: "Annual General Meeting scheduled",
-    time: "Today, 10:24 AM",
-    section: "Event Management",
-    iconColor: "indigo",
-  },
-  {
-    text: "Ramadan fundraiser post published",
-    time: "Yesterday, 3:45 PM",
-    section: "Post Management",
-    iconColor: "violet",
-  },
-  {
-    text: "Society profile updated",
-    time: "May 5, 2026",
-    section: "My Societies",
-    iconColor: "indigo",
-  },
-];
+function EventRow({
+  event,
+}: {
+  event: SocietyHeadAnalyticsResponse["topEvents"][number];
+}) {
+  const s = statusStyles[event.status] ?? statusStyles.upcoming;
+  const date = new Date(event.startTime).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 
+  return (
+    <Link
+      to={`/events/${event.id}`}
+      className="flex items-start gap-3 py-2.5 border-b border-gray-50 last:border-0 last:pb-0"
+    >
+      <div
+        className={`h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 ${iconBg.indigo}`}
+      >
+        <Activity className="h-4 w-4" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[12px] font-medium text-gray-700 truncate">
+          {event.title}
+        </p>
+        <p className="text-[11px] text-gray-400 mt-0.5">
+          {date} · {event.society.title}
+        </p>
+      </div>
+      <span
+        className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full border flex-shrink-0 ${s.bg} ${s.text} ${s.border}`}
+      >
+        {s.label}
+      </span>
+    </Link>
+  );
+}
 // ─── Colour helpers ────────────────────────────────────────────────────────────
 
 const iconBg: Record<string, string> = {
@@ -212,6 +255,17 @@ function ActivityRow({ item }: { item: ActivityItem }) {
 
 export default function SocietyHeadDashboard() {
   const { user } = useFullApp();
+  const { data, isLoading, isError, error } = useGetMyAnalytics();
+
+  if (isLoading) return <LoadingBar />;
+  if (isError) return <SocietyHeadErrorComponent error={error} />;
+
+  const stats: StatCard[] = [
+    { label: "My Societies", value: data?.societiesHeadCount ?? 0, icon: "🏛️" },
+    { label: "Events", value: data?.totalEvents ?? 0, icon: "📅" },
+    { label: "Posts", value: data?.totalPosts ?? 0, icon: "📝" },
+  ];
+
   return (
     <div className="min-h-screen  p-6 font-sans">
       {/* ── Greeting ── */}
@@ -248,13 +302,11 @@ export default function SocietyHeadDashboard() {
       <section className="bg-white rounded-2xl border border-indigo-100 p-5">
         <div className="flex items-center gap-2 mb-3">
           <div className="h-2 w-2 rounded-full bg-indigo-500" />
-          <p className="text-sm font-semibold text-indigo-950">
-            Recent Activity
-          </p>
+          <p className="text-sm font-semibold text-indigo-950">Top Events</p>
         </div>
         <div>
-          {recentActivity.map((item, i) => (
-            <ActivityRow key={i} item={item} />
+          {(data?.topEvents ?? []).map((event) => (
+            <EventRow key={event.id} event={event} />
           ))}
         </div>
       </section>

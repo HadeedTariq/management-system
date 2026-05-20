@@ -1,9 +1,17 @@
 import { Router } from "express";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { adminController } from "./admin.controller";
+import { adminTokenChecker, isAdmin } from "./admin.middleware";
 
 const router = Router();
 
+router.use(isAdmin);
+
+router.post("/set-up", asyncHandler(adminController.adminAuthHandler));
+
+router.use(adminTokenChecker);
+
+router.get("/reach-able", asyncHandler(adminController.adminHealthChecker));
 router.get("/society/all", asyncHandler(adminController.getSocieties));
 router.get(
   "/society/details/:id",
