@@ -1,10 +1,8 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres:17
-    container_name: your_container_name
-    restart: always
+    container_name: civiconnect-db
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
@@ -13,5 +11,39 @@ services:
       POSTGRES_PASSWORD: your_password
     volumes:
       - pgdata:/var/lib/postgresql/data
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: civiconnect-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./server/.env
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: civiconnect-client
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    env_file:
+      - ./client/.env
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    depends_on:
+      - server
+
 volumes:
   pgdata:

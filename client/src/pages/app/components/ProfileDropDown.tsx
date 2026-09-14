@@ -100,7 +100,7 @@ function ProfileDropDown() {
 
         <DropdownMenuGroup className="space-y-0.5 py-1.5">
           {/* Admin Dashboard Entry */}
-          {user && roleDashboardMap["admin"] && (
+          {user && user.role === "admin" && roleDashboardMap["admin"] && (
             <Link to={roleDashboardMap["admin"].path}>
               <DropdownMenuItem
                 className="
